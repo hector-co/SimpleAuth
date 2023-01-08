@@ -11,3 +11,14 @@ public partial class Role
 {
     internal List<User> UserRoles { get; set; }
 }
+
+public partial class User
+{
+    internal List<UserRole> UserRoles { get; set; }
+}
+
+public partial class UserRole : IdentityUserRole<int>
+{
+    public User User { get; set; }
+    public Role Role { get; set; }
+}

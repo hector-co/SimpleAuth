@@ -32,18 +32,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasMany(m => m.Claims)
             .WithOne()
             .HasForeignKey(r => r.UserId);
-        builder.HasMany(m => m.Roles)
-            .WithMany(r => r.UserRoles)
-            .UsingEntity<IdentityUserRole<int>>(
-                "UserRoles",    
-                j => j
-                    .HasOne<Role>()
-                    .WithMany()
-                    .HasForeignKey("RoleId"),
-                j => j
-                    .HasOne<User>()
-                    .WithMany()
-                    .HasForeignKey("UserId"));
+
+        builder.Ignore(m => m.Roles);
 
         builder.HasIndex(u => u.NormalizedUserName).HasDatabaseName("UserNameIndex").IsUnique();
         builder.HasIndex(u => u.NormalizedEmail).HasDatabaseName("EmailIndex");

@@ -11,7 +11,7 @@ internal static class UserQueryableExtensions
         (this IQueryable<User> queryable)
     {
         return queryable
-            .Include(m => m.Roles)
+            .Include(m => m.UserRoles)
             .Include(m => m.Claims)
             ;
     }

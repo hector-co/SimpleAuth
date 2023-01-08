@@ -8,7 +8,7 @@ using SimpleAuth.Infrastructure.DataAccess.EF.Users;
 namespace SimpleAuth.Infrastructure.DataAccess.EF;
 
 public class SimpleAuthContext
-    : IdentityDbContext<User, Role, int, UserClaim, IdentityUserRole<int>, IdentityUserLogin<int>, RoleClaim, IdentityUserToken<int>>
+    : IdentityDbContext<User, Role, int, UserClaim, UserRole, IdentityUserLogin<int>, RoleClaim, IdentityUserToken<int>>
 {
     public const string DbSchema = "auth";
 
@@ -27,6 +27,7 @@ public class SimpleAuthContext
         modelBuilder.ApplyConfiguration(new RoleClaimConfiguration(dbSchema));
         modelBuilder.ApplyConfiguration(new UserConfiguration(dbSchema));
         modelBuilder.ApplyConfiguration(new UserClaimConfiguration(dbSchema));
+        modelBuilder.ApplyConfiguration(new UserRoleConfiguration(dbSchema));
 
         modelBuilder.Entity<IdentityUserLogin<int>>(b =>
         {
