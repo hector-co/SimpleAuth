@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace SimpleAuth.Infrastructure.Migrations
 {
-    public partial class Identity : Migration
+    public partial class IdentityModels : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

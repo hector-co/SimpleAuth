@@ -12,8 +12,8 @@ using SimpleAuth.Infrastructure.DataAccess.EF;
 namespace SimpleAuth.Infrastructure.Migrations
 {
     [DbContext(typeof(SimpleAuthContext))]
-    [Migration("20230108221935_Identity")]
-    partial class Identity
+    [Migration("20230108231159_IdentityModels")]
+    partial class IdentityModels
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
