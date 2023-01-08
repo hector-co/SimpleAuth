@@ -1,0 +1,69 @@
+{
+  "name": "SimpleAuth",
+  "settings": {
+    "apiPrefix": "api",
+    "databaseSchema": "auth"
+  },
+  "model": {
+    "Role": {
+      "properties": {
+        "Name": {
+          "typeName": "string",
+          "size": 256
+        },
+        "Claims": "List<RoleClaim>",
+        "DefaultRole": "bool",
+        "Disabled": "bool"
+      }
+    },
+    "RoleClaim": {
+      "properties": {
+        "ClaimType": "string",
+        "ClaimValue": "string"
+      },
+      "isRoot": false
+    },
+    "User": {
+      "properties": {
+        "IsAdmin": "bool",
+        "Roles": {
+          "typeName": "List<Role>",
+          "withMany": true
+        },
+        "Claims": "List<UserClaim>",
+        "UserName": {
+          "typeName": "string",
+          "size": 256
+        },
+        "Email": {
+          "typeName": "string",
+          "size": 256
+        },
+        "EmailConfirmed": "bool",
+        "PhoneNumber": "string",
+        "DisplayName": {
+          "typeName": "string",
+          "size": 256
+        },
+        "Name": {
+          "typeName": "string",
+          "size": 256
+        },
+        "LastName": {
+          "typeName": "string",
+          "size": 256
+        },
+        "Disabled": "bool"
+      }
+    },
+    "UserClaim": {
+      "properties": {
+        "ClaimType": "string",
+        "ClaimValue": "string"
+      },
+      "isRoot": false
+    }
+  },
+  "enums": {
+  }
+}

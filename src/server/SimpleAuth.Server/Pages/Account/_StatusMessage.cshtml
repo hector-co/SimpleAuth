@@ -1,0 +1,29 @@
+﻿@model string
+
+@{
+    var statusMessage = StatusMessageModel.FromJsonString(Model);
+
+    if (statusMessage == null) return;
+
+    var statusMessageClass = "";
+    switch (statusMessage.MessageType)
+    {
+        case StatusMessageType.Error:
+            statusMessageClass = "danger";
+            break;
+        case StatusMessageType.Warning:
+            statusMessageClass = "warning";
+            break;
+        case StatusMessageType.Success:
+            statusMessageClass = "success";
+            break;
+        case StatusMessageType.Info:
+            statusMessageClass = "info";
+            break;
+    }
+
+    <div class="alert alert-@statusMessageClass alert-dismissible" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        @Html.Raw(statusMessage.Message)
+    </div>
+}
