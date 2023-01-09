@@ -10,6 +10,6 @@ public partial class Role : IdentityRole<int>
     }
 
     public List<RoleClaim> Claims { get; set; }
-    public bool DefaultRole { get; set; }
+    public bool AssignByDefault { get; set; }
     public bool Disabled { get; set; }
 }

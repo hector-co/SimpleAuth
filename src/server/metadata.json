@@ -12,7 +12,7 @@
           "size": 256
         },
         "Claims": "List<RoleClaim>",
-        "DefaultRole": "bool",
+        "AssignByDefault": "bool",
         "Disabled": "bool"
       }
     },

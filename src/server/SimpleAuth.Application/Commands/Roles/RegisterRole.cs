@@ -6,7 +6,7 @@ public record RegisterRole
 (
     string Name,
     List<RegisterRole.RegisterRoleClaim> Claims,
-    bool DefaultRole,
+    bool AssignByDefault,
     bool Disabled
 ) : ICommand<int>
 {

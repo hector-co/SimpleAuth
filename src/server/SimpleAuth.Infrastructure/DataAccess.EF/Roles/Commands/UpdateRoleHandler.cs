@@ -26,7 +26,7 @@ public class UpdateRoleHandler : ICommandHandler<UpdateRole>
             return Response.Failure(new Error("Role.Update.NotFound", "Entity not found."));
 
         role.Name = request.Name;
-        role.DefaultRole = request.DefaultRole;
+        role.AssignByDefault = request.AssignByDefault;
         role.Disabled = request.Disabled;
         role.Claims = request.Claims.Select(r => new RoleClaim
         {

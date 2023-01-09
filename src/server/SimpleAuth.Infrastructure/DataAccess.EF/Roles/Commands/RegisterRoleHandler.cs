@@ -21,7 +21,7 @@ public class RegisterRoleHandler : ICommandHandler<RegisterRole, int>
         var role = new Role
         {
             Name = request.Name,
-            DefaultRole = request.DefaultRole,
+            AssignByDefault = request.AssignByDefault,
             Disabled = request.Disabled,
             Claims = request.Claims.Select(r => new RoleClaim
             {

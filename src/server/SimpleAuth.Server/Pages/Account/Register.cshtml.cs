@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using SimpleAuth.Application;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Server.Models;
@@ -16,6 +17,7 @@ namespace SimpleAuth.Server.Pages.Account
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly IUserStore<User> _userStore;
         private readonly IUserEmailStore<User> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
@@ -23,12 +25,14 @@ namespace SimpleAuth.Server.Pages.Account
 
         public RegisterModel(
             UserManager<User> userManager,
+            RoleManager<Role> roleManager,
             IUserStore<User> userStore,
             SignInManager<User> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
@@ -88,6 +92,13 @@ namespace SimpleAuth.Server.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
+
+                var defaultRoles = await _roleManager.Roles.Where(r => r.AssignByDefault)
+                    .Select(r => r.Name).ToListAsync();
+                if (defaultRoles.Count > 0)
+                {
+                    await _userManager.AddToRolesAsync(user, defaultRoles);
+                }
 
                 if (result.Succeeded)
                 {

@@ -7,7 +7,7 @@ public record UpdateRole
 (
     string Name,
     List<UpdateRole.UpdateRoleClaim> Claims,
-    bool DefaultRole,
+    bool AssignByDefault,
     bool Disabled
 ) : ICommand
 {
