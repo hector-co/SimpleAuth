@@ -3,6 +3,7 @@ using MediatR;
 using SimpleAuth.Application.Queries.Users;
 using SimpleAuth.Application.Commands.Users;
 using QueryX;
+using SimpleAuth.Server.Helpers;
 
 namespace SimpleAuth.Server.Controllers;
 

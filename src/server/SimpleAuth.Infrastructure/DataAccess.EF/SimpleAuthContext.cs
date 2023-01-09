@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.EntityFrameworkCore.Models;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Infrastructure.DataAccess.EF.Roles;
 using SimpleAuth.Infrastructure.DataAccess.EF.Users;
@@ -48,5 +49,12 @@ public class SimpleAuthContext
 
             b.ToTable("UserTokens", dbSchema);
         });
+
+        modelBuilder.UseOpenIddict<int>();
+
+        modelBuilder.Entity<OpenIddictEntityFrameworkCoreApplication<int>>().ToTable("OpenIddictApplications", dbSchema);
+        modelBuilder.Entity<OpenIddictEntityFrameworkCoreAuthorization<int>>().ToTable("OpenIddictAuthorizations", dbSchema);
+        modelBuilder.Entity<OpenIddictEntityFrameworkCoreToken<int>>().ToTable("OpenIddictScopes", dbSchema);
+        modelBuilder.Entity<OpenIddictEntityFrameworkCoreScope<int>>().ToTable("OpenIddictTokens", dbSchema);
     }
 }

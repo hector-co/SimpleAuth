@@ -2,9 +2,9 @@ using System.Net;
 using SimpleAuth.Server.ExceptionHandling;
 using SimpleAuth.Domain.Abstractions;
 
-namespace SimpleAuth.Server;
+namespace SimpleAuth.Server.Helpers;
 
-public static class Extensions
+public static class ResponseExtensions
 {
     public static void Verify(this Response response)
     {
