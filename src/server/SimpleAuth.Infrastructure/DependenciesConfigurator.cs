@@ -71,7 +71,8 @@ namespace SimpleAuth.Infrastructure
                 options.SetAuthorizationEndpointUris("connect/authorize")
                        .SetLogoutEndpointUris("connect/logout")
                        .SetTokenEndpointUris("connect/token")
-                       .SetUserinfoEndpointUris("connect/userinfo");
+                       .SetUserinfoEndpointUris("connect/userinfo")
+                       .SetIntrospectionEndpointUris("/connect/introspect");
 
                 // Mark the "email", "profile" and "roles" scopes as supported scopes.
                 options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles, Scopes.OfflineAccess);

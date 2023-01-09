@@ -1,7 +1,12 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenIddict.Abstractions;
+using OpenIddict.Core;
+using OpenIddict.EntityFrameworkCore.Models;
+using SimpleAuth.Domain.Model;
+using System.Text.Json;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF;
@@ -30,6 +35,17 @@ public class InitData : IHostedService
 
     private static async Task AddData(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
+
+        if (!await roleManager.RoleExistsAsync("Customer"))
+        {
+            await roleManager.CreateAsync(new Role
+            {
+                Name = "Customer",
+                AssignByDefault = true
+            });
+        }
+
         var manager = serviceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
         if (await manager.FindByClientIdAsync("pictures-webapp", cancellationToken) == null)
@@ -67,8 +83,38 @@ public class InitData : IHostedService
                     Permissions.Scopes.Email,
                     Permissions.Scopes.Profile,
                     Permissions.Scopes.Roles,
+
+                    Permissions.Prefixes.Scope + "pictures-api"
                 }
             }, cancellationToken);
+        }
+
+        if (await manager.FindByClientIdAsync("pictures-api", cancellationToken) == null)
+        {
+            await manager.CreateAsync(new OpenIddictApplicationDescriptor
+            {
+                ClientId = "pictures-api",
+                ClientSecret = "20DC15F7-BB3D-4741-BEBC-83D797363CAF",
+                ConsentType = ConsentTypes.Implicit,
+                Type = ClientTypes.Confidential,
+                DisplayName = "Pictures api application",
+                Permissions =
+                {
+                    Permissions.Endpoints.Introspection
+                }
+            }, cancellationToken);
+        }
+
+        var scopeManager = serviceProvider.GetRequiredService<OpenIddictScopeManager<OpenIddictEntityFrameworkCoreScope<int>>>();
+        if (await scopeManager.FindByNameAsync("pictures-api", cancellationToken) == null)
+        {
+            var scopeDescriptor = new OpenIddictEntityFrameworkCoreScope<int>
+            {
+                Name = "pictures-api",
+                Resources = JsonSerializer.Serialize(new[] { "pictures-api" })
+            };
+
+            await scopeManager.CreateAsync(scopeDescriptor, cancellationToken);
         }
     }
 }
