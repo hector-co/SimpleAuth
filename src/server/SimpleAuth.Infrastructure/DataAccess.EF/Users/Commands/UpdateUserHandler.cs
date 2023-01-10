@@ -25,7 +25,6 @@ public class UpdateUserHandler : ICommandHandler<UpdateUser>
         if (user == null)
             return Response.Failure(new Error("User.Update.NotFound", "Entity not found."));
 
-        user.IsAdmin = request.IsAdmin;
         user.UserName = request.UserName;
         user.Email = request.Email;
         user.EmailConfirmed = request.EmailConfirmed;
@@ -33,7 +32,6 @@ public class UpdateUserHandler : ICommandHandler<UpdateUser>
         user.DisplayName = request.DisplayName;
         user.Name = request.Name;
         user.LastName = request.LastName;
-        user.Disabled = request.Disabled;
         user.Roles = await _context.Set<Role>().Where(er => request.RolesId.Contains(er.Id)).ToListAsync(cancellationToken);
         user.Claims = request.Claims.Select(r => new UserClaim
         {

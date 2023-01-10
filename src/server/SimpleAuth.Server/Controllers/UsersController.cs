@@ -20,7 +20,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id}", Name = "GetUserById")]
-    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
     {
         var getByIdQuery = new GetUserDtoById(id);
         var result = await _mediator.Send(getByIdQuery, cancellationToken);
@@ -46,7 +46,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateUser command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateUser command, CancellationToken cancellationToken)
     {
         command.Id = id;
         var response = await _mediator.Send(command, cancellationToken);
@@ -55,7 +55,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {
         var command = new DeleteUser(id);
         var response = await _mediator.Send(command, cancellationToken);

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace SimpleAuth.Domain.Model;
 
-public partial class Role : IdentityRole<int>
+public partial class Role : IdentityRole
 {
     public Role()
     {
@@ -11,5 +11,4 @@ public partial class Role : IdentityRole<int>
 
     public List<RoleClaim> Claims { get; set; }
     public bool AssignByDefault { get; set; }
-    public bool Disabled { get; set; }
 }

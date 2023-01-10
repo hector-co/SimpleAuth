@@ -7,7 +7,7 @@ using SimpleAuth.Application.Commands.Users;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Users.Commands;
 
-public class RegisterUserHandler : ICommandHandler<RegisterUser, int>
+public class RegisterUserHandler : ICommandHandler<RegisterUser, string>
 {
     private readonly SimpleAuthContext _context;
 
@@ -16,11 +16,10 @@ public class RegisterUserHandler : ICommandHandler<RegisterUser, int>
         _context = context;
     }
 
-    public async Task<Response<int>> Handle(RegisterUser request, CancellationToken cancellationToken)
+    public async Task<Response<string>> Handle(RegisterUser request, CancellationToken cancellationToken)
     {
         var user = new User
         {
-            IsAdmin = request.IsAdmin,
             UserName = request.UserName,
             Email = request.Email,
             EmailConfirmed = request.EmailConfirmed,
@@ -28,7 +27,6 @@ public class RegisterUserHandler : ICommandHandler<RegisterUser, int>
             DisplayName = request.DisplayName,
             Name = request.Name,
             LastName = request.LastName,
-            Disabled = request.Disabled,
             Roles = await _context.Set<Role>().Where(er => request.RolesId.Contains(er.Id)).ToListAsync(cancellationToken),
             Claims = request.Claims.Select(r => new UserClaim
             {

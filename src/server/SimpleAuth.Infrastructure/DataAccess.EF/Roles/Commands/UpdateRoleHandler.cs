@@ -27,7 +27,6 @@ public class UpdateRoleHandler : ICommandHandler<UpdateRole>
 
         role.Name = request.Name;
         role.AssignByDefault = request.AssignByDefault;
-        role.Disabled = request.Disabled;
         role.Claims = request.Claims.Select(r => new RoleClaim
         {
             Id = r.Id,

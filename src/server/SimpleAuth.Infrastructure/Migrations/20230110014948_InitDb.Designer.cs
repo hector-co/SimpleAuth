@@ -12,8 +12,8 @@ using SimpleAuth.Infrastructure.DataAccess.EF;
 namespace SimpleAuth.Infrastructure.Migrations
 {
     [DbContext(typeof(SimpleAuthContext))]
-    [Migration("20230108231536_OpeniddictModels")]
-    partial class OpeniddictModels
+    [Migration("20230110014948_InitDb")]
+    partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,7 @@ namespace SimpleAuth.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
@@ -37,18 +37,18 @@ namespace SimpleAuth.Infrastructure.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
                     b.ToTable("UserLogins", "auth");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
@@ -274,21 +274,15 @@ namespace SimpleAuth.Infrastructure.Migrations
 
             modelBuilder.Entity("SimpleAuth.Domain.Model.Role", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<bool>("AssignByDefault")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
-
-                    b.Property<bool>("DefaultRole")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("Disabled")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -321,8 +315,8 @@ namespace SimpleAuth.Infrastructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer");
+                    b.Property<string>("RoleId")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -333,11 +327,8 @@ namespace SimpleAuth.Infrastructure.Migrations
 
             modelBuilder.Entity("SimpleAuth.Domain.Model.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
@@ -345,9 +336,6 @@ namespace SimpleAuth.Infrastructure.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
-
-                    b.Property<bool>("Disabled")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
@@ -359,9 +347,6 @@ namespace SimpleAuth.Infrastructure.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsAdmin")
                         .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
@@ -433,8 +418,8 @@ namespace SimpleAuth.Infrastructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -445,11 +430,11 @@ namespace SimpleAuth.Infrastructure.Migrations
 
             modelBuilder.Entity("SimpleAuth.Domain.Model.UserRole", b =>
                 {
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer");
+                    b.Property<string>("RoleId")
+                        .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.HasKey("RoleId", "UserId");
 
@@ -486,18 +471,14 @@ namespace SimpleAuth.Infrastructure.Migrations
                 {
                     b.HasOne("SimpleAuth.Domain.Model.Role", null)
                         .WithMany("Claims")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId");
                 });
 
             modelBuilder.Entity("SimpleAuth.Domain.Model.UserClaim", b =>
                 {
                     b.HasOne("SimpleAuth.Domain.Model.User", null)
                         .WithMany("Claims")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("SimpleAuth.Domain.Model.UserRole", b =>

@@ -3,8 +3,7 @@ using SimpleAuth.Application.Queries.Roles;
 namespace SimpleAuth.Application.Queries.Users;
 
 public record UserDto(
-    int Id,
-    bool IsAdmin,
+    string Id,
     List<RoleDto> Roles,
     List<UserClaimDto> Claims,
     string UserName,
@@ -13,5 +12,4 @@ public record UserDto(
     string PhoneNumber,
     string DisplayName,
     string Name,
-    string LastName,
-    bool Disabled);
+    string LastName);

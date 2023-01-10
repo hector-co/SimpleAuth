@@ -2,7 +2,9 @@
   "name": "SimpleAuth",
   "settings": {
     "apiPrefix": "api",
-    "databaseSchema": "auth"
+    "databaseSchema": "auth",
+    "apiControllersFolder": "Server/Controllers",
+    "ApiControllersNamespace": "Server.Controllers"
   },
   "model": {
     "Role": {
@@ -13,8 +15,8 @@
         },
         "Claims": "List<RoleClaim>",
         "AssignByDefault": "bool",
-        "Disabled": "bool"
-      }
+      },
+      "IdentifierType": "string"
     },
     "RoleClaim": {
       "properties": {
@@ -25,7 +27,6 @@
     },
     "User": {
       "properties": {
-        "IsAdmin": "bool",
         "Roles": {
           "typeName": "List<Role>",
           "withMany": true
@@ -52,9 +53,9 @@
         "LastName": {
           "typeName": "string",
           "size": 256
-        },
-        "Disabled": "bool"
-      }
+        }
+      },
+      "IdentifierType": "string"
     },
     "UserClaim": {
       "properties": {

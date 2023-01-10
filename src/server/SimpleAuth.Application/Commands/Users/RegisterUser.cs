@@ -4,8 +4,7 @@ namespace SimpleAuth.Application.Commands.Users;
 
 public record RegisterUser
 (
-    bool IsAdmin,
-    List<int> RolesId,
+    List<string> RolesId,
     List<RegisterUser.RegisterUserClaim> Claims,
     string UserName,
     string Email,
@@ -13,9 +12,8 @@ public record RegisterUser
     string PhoneNumber,
     string DisplayName,
     string Name,
-    string LastName,
-    bool Disabled
-) : ICommand<int>
+    string LastName
+) : ICommand<string>
 {
     public record RegisterUserClaim(
         string ClaimType,

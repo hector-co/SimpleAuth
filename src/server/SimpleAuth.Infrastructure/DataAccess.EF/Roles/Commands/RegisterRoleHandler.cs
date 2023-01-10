@@ -7,7 +7,7 @@ using SimpleAuth.Application.Commands.Roles;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Roles.Commands;
 
-public class RegisterRoleHandler : ICommandHandler<RegisterRole, int>
+public class RegisterRoleHandler : ICommandHandler<RegisterRole, string>
 {
     private readonly SimpleAuthContext _context;
 
@@ -16,13 +16,12 @@ public class RegisterRoleHandler : ICommandHandler<RegisterRole, int>
         _context = context;
     }
 
-    public async Task<Response<int>> Handle(RegisterRole request, CancellationToken cancellationToken)
+    public async Task<Response<string>> Handle(RegisterRole request, CancellationToken cancellationToken)
     {
         var role = new Role
         {
             Name = request.Name,
             AssignByDefault = request.AssignByDefault,
-            Disabled = request.Disabled,
             Claims = request.Claims.Select(r => new RoleClaim
             {
                 ClaimType = r.ClaimType,

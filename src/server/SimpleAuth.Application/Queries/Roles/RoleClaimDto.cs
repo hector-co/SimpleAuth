@@ -1,6 +1,6 @@
 namespace SimpleAuth.Application.Queries.Roles;
 
 public record RoleClaimDto(
-    int Id,
+    string Id,
     string ClaimType,
     string ClaimValue);

@@ -1,8 +1,7 @@
 namespace SimpleAuth.Application.Queries.Roles;
 
 public record RoleDto(
-    int Id,
+    string Id,
     string Name,
     List<RoleClaimDto> Claims,
-    bool AssignByDefault,
-    bool Disabled);
+    bool AssignByDefault);

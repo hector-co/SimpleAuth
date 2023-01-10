@@ -17,7 +17,7 @@ public partial class User
     internal List<UserRole> UserRoles { get; set; }
 }
 
-public partial class UserRole : IdentityUserRole<int>
+public partial class UserRole : IdentityUserRole<string>
 {
     public User User { get; set; }
     public Role Role { get; set; }

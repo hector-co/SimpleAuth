@@ -6,7 +6,7 @@ namespace SimpleAuth.Application.Commands.Users;
 public record UpdateUser
 (
     bool IsAdmin,
-    List<int> RolesId,
+    List<string> RolesId,
     List<UpdateUser.UpdateUserClaim> Claims,
     string UserName,
     string Email,
@@ -14,12 +14,11 @@ public record UpdateUser
     string PhoneNumber,
     string DisplayName,
     string Name,
-    string LastName,
-    bool Disabled
+    string LastName
 ) : ICommand
 {
     [JsonIgnore]
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public record UpdateUserClaim(
         int Id,

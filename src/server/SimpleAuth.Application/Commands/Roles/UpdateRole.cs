@@ -7,12 +7,11 @@ public record UpdateRole
 (
     string Name,
     List<UpdateRole.UpdateRoleClaim> Claims,
-    bool AssignByDefault,
-    bool Disabled
+    bool AssignByDefault
 ) : ICommand
 {
     [JsonIgnore]
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public record UpdateRoleClaim(
         int Id,
