@@ -89,7 +89,7 @@ namespace SimpleAuth.Server.Pages.Account
             }
 
             var errors = "<ul>" + string.Join("", result.Errors.Select(e => $"<li>{e}</li>")) + "</ul>";
-            StatusMessage = StatusMessageModel.Error(errors).ToJsonString();
+            StatusMessage = StatusMessageModel.ErrorMessage(errors);
 
             return Page();
         }

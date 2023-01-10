@@ -128,7 +128,7 @@ namespace SimpleAuth.Server.Pages.Account
                 }
                 foreach (var error in result.Errors)
                 {
-                    StatusMessage = StatusMessageModel.Error(error.Description).ToJsonString();
+                    StatusMessage = StatusMessageModel.ErrorMessage(error.Description);
                 }
             }
 

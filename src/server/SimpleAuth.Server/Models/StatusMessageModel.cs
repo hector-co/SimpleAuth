@@ -34,24 +34,24 @@ namespace SimpleAuth.Server.Models
             return JsonSerializer.Deserialize<StatusMessageModel>(json);
         }
 
-        public static StatusMessageModel Error(string message)
+        public static string ErrorMessage(string message)
         {
-            return new StatusMessageModel(message, StatusMessageType.Error);
+            return new StatusMessageModel(message, StatusMessageType.Error).ToJsonString();
         }
 
-        public static StatusMessageModel Warning(string message)
+        public static string WarningMessage(string message)
         {
-            return new StatusMessageModel(message, StatusMessageType.Warning);
+            return new StatusMessageModel(message, StatusMessageType.Warning).ToJsonString();
         }
 
-        public static StatusMessageModel Success(string message)
+        public static string SuccessMessage(string message)
         {
-            return new StatusMessageModel(message, StatusMessageType.Success);
+            return new StatusMessageModel(message, StatusMessageType.Success).ToJsonString();
         }
 
-        public static StatusMessageModel Info(string message)
+        public static string InfoMessage(string message)
         {
-            return new StatusMessageModel(message, StatusMessageType.Info);
+            return new StatusMessageModel(message, StatusMessageType.Info).ToJsonString();
         }
     }
 }

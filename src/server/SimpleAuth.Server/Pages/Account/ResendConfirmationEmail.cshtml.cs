@@ -58,7 +58,7 @@ namespace SimpleAuth.Server.Pages.Account
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user == null)
             {
-                StatusMessage = StatusMessageModel.Success("Verification email sent. Please check your email.").ToJsonString();
+                StatusMessage = StatusMessageModel.SuccessMessage("Verification email sent. Please check your email.");
                 return Page();
             }
 
@@ -75,7 +75,7 @@ namespace SimpleAuth.Server.Pages.Account
                 "Confirm your email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-            StatusMessage = StatusMessageModel.Success("Verification email sent. Please check your email.").ToJsonString();
+            StatusMessage = StatusMessageModel.SuccessMessage("Verification email sent. Please check your email.");
 
             return Page();
         }

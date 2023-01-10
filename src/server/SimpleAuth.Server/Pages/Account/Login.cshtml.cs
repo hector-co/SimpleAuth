@@ -80,11 +80,12 @@ namespace SimpleAuth.Server.Pages.Account
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
+                    StatusMessage = StatusMessageModel.ErrorMessage("This account has been locked out, please try again later.");
+                    return Page();
                 }
                 else
-                {
-                    StatusMessage = StatusMessageModel.Error("Invalid login attempt.").ToJsonString();
+                {   
+                    StatusMessage = StatusMessageModel.ErrorMessage("Invalid login attempt.");
                     return Page();
                 }
             }

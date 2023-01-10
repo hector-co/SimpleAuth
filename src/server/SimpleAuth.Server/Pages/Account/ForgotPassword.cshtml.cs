@@ -54,7 +54,7 @@ namespace SimpleAuth.Server.Pages.Account
                 if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    StatusMessage = StatusMessageModel.Success("Verification email sent. Please check your email.").ToJsonString();
+                    StatusMessage = StatusMessageModel.SuccessMessage("Verification email sent. Please check your email.");
                     return Page();
                 }
 
@@ -73,7 +73,7 @@ namespace SimpleAuth.Server.Pages.Account
                     "Reset Password",
                     $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                StatusMessage = StatusMessageModel.Success("Verification email sent. Please check your email.").ToJsonString();
+                StatusMessage = StatusMessageModel.SuccessMessage("Verification email sent. Please check your email.");
             }
 
             return Page();
