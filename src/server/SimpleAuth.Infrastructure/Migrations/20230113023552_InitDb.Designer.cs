@@ -12,7 +12,7 @@ using SimpleAuth.Infrastructure.DataAccess.EF;
 namespace SimpleAuth.Infrastructure.Migrations
 {
     [DbContext(typeof(SimpleAuthContext))]
-    [Migration("20230110014948_InitDb")]
+    [Migration("20230113023552_InitDb")]
     partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -207,7 +207,7 @@ namespace SimpleAuth.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("OpenIddictTokens", "auth");
+                    b.ToTable("OpenIddictScopes", "auth");
                 });
 
             modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken<int>", b =>
@@ -269,7 +269,7 @@ namespace SimpleAuth.Infrastructure.Migrations
 
                     b.HasIndex("ApplicationId", "Status", "Subject", "Type");
 
-                    b.ToTable("OpenIddictScopes", "auth");
+                    b.ToTable("OpenIddictTokens", "auth");
                 });
 
             modelBuilder.Entity("SimpleAuth.Domain.Model.Role", b =>

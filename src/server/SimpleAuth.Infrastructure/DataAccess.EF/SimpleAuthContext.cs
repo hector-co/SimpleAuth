@@ -54,7 +54,7 @@ public class SimpleAuthContext
 
         modelBuilder.Entity<OpenIddictEntityFrameworkCoreApplication<int>>().ToTable("OpenIddictApplications", dbSchema);
         modelBuilder.Entity<OpenIddictEntityFrameworkCoreAuthorization<int>>().ToTable("OpenIddictAuthorizations", dbSchema);
-        modelBuilder.Entity<OpenIddictEntityFrameworkCoreToken<int>>().ToTable("OpenIddictScopes", dbSchema);
-        modelBuilder.Entity<OpenIddictEntityFrameworkCoreScope<int>>().ToTable("OpenIddictTokens", dbSchema);
+        modelBuilder.Entity<OpenIddictEntityFrameworkCoreToken<int>>().ToTable("OpenIddictTokens", dbSchema);
+        modelBuilder.Entity<OpenIddictEntityFrameworkCoreScope<int>>().ToTable("OpenIddictScopes", dbSchema);
     }
 }

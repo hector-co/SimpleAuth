@@ -39,7 +39,7 @@ namespace SimpleAuth.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OpenIddictTokens",
+                name: "OpenIddictScopes",
                 schema: "auth",
                 columns: table => new
                 {
@@ -56,7 +56,7 @@ namespace SimpleAuth.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OpenIddictTokens", x => x.Id);
+                    table.PrimaryKey("PK_OpenIddictScopes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -233,7 +233,7 @@ namespace SimpleAuth.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OpenIddictScopes",
+                name: "OpenIddictTokens",
                 schema: "auth",
                 columns: table => new
                 {
@@ -254,15 +254,15 @@ namespace SimpleAuth.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OpenIddictScopes", x => x.Id);
+                    table.PrimaryKey("PK_OpenIddictTokens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OpenIddictScopes_OpenIddictApplications_ApplicationId",
+                        name: "FK_OpenIddictTokens_OpenIddictApplications_ApplicationId",
                         column: x => x.ApplicationId,
                         principalSchema: "auth",
                         principalTable: "OpenIddictApplications",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_OpenIddictScopes_OpenIddictAuthorizations_AuthorizationId",
+                        name: "FK_OpenIddictTokens_OpenIddictAuthorizations_AuthorizationId",
                         column: x => x.AuthorizationId,
                         principalSchema: "auth",
                         principalTable: "OpenIddictAuthorizations",
@@ -283,29 +283,29 @@ namespace SimpleAuth.Infrastructure.Migrations
                 columns: new[] { "ApplicationId", "Status", "Subject", "Type" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_OpenIddictScopes_ApplicationId_Status_Subject_Type",
+                name: "IX_OpenIddictScopes_Name",
                 schema: "auth",
                 table: "OpenIddictScopes",
-                columns: new[] { "ApplicationId", "Status", "Subject", "Type" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OpenIddictScopes_AuthorizationId",
-                schema: "auth",
-                table: "OpenIddictScopes",
-                column: "AuthorizationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OpenIddictScopes_ReferenceId",
-                schema: "auth",
-                table: "OpenIddictScopes",
-                column: "ReferenceId",
+                column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_OpenIddictTokens_Name",
+                name: "IX_OpenIddictTokens_ApplicationId_Status_Subject_Type",
                 schema: "auth",
                 table: "OpenIddictTokens",
-                column: "Name",
+                columns: new[] { "ApplicationId", "Status", "Subject", "Type" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictTokens_AuthorizationId",
+                schema: "auth",
+                table: "OpenIddictTokens",
+                column: "AuthorizationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictTokens_ReferenceId",
+                schema: "auth",
+                table: "OpenIddictTokens",
+                column: "ReferenceId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
