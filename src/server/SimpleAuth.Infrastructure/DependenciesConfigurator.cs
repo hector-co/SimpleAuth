@@ -2,10 +2,12 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
@@ -16,6 +18,7 @@ using SimpleAuth.Application;
 using SimpleAuth.Application.Behaviors;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Infrastructure.DataAccess.EF;
+using System.Security.Cryptography.X509Certificates;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace SimpleAuth.Infrastructure
@@ -24,6 +27,11 @@ namespace SimpleAuth.Infrastructure
     {
         public static WebApplicationBuilder RegisterDependencies(this WebApplicationBuilder builder)
         {
+            builder.Services.Configure<ServerSettingsOption>(
+                builder.Configuration.GetSection(ServerSettingsOption.ServerSettings));
+
+            var serverSettings = builder.Configuration.GetSection(ServerSettingsOption.ServerSettings).Get<ServerSettingsOption>();
+
             builder.Services.AddDbContext<SimpleAuthContext>(options =>
             {
                 options.UseNpgsql(
@@ -33,7 +41,16 @@ namespace SimpleAuth.Infrastructure
                 options.UseOpenIddict();
             });
 
-            builder.Services.AddIdentity<User, Role>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddIdentity<User, Role>(options =>
+            {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedAccount = true;
+            })
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<SimpleAuthContext>();
 
@@ -68,7 +85,8 @@ namespace SimpleAuth.Infrastructure
             .AddServer(options =>
             {
                 // Enable the authorization, logout, token and userinfo endpoints.
-                options.SetAuthorizationEndpointUris("connect/authorize")
+                options.SetIssuer(new Uri(serverSettings.ServerUrl))
+                       .SetAuthorizationEndpointUris("connect/authorize")
                        .SetLogoutEndpointUris("connect/logout")
                        .SetTokenEndpointUris("connect/token")
                        .SetUserinfoEndpointUris("connect/userinfo")
@@ -85,8 +103,21 @@ namespace SimpleAuth.Infrastructure
                     .RequireProofKeyForCodeExchange();
 
                 // Register the signing and encryption credentials.
-                options.AddDevelopmentEncryptionCertificate()
-                       .AddDevelopmentSigningCertificate();
+                if (builder.Environment.IsDevelopment())
+                {
+                    options.AddDevelopmentEncryptionCertificate()
+                           .AddDevelopmentSigningCertificate();
+                }
+                else
+                {
+                    var encryptionCertificate = new X509Certificate2(
+                            serverSettings.EncryptionCertificatePath, serverSettings.EncryptionCertificatePassword);
+                    var signinCertificate = new X509Certificate2(
+                            serverSettings.SigninCertificatePath, serverSettings.SigninCertificatePassword);
+
+                    options.AddEncryptionCertificate(encryptionCertificate);
+                    options.AddSigningCertificate(signinCertificate);
+                }
 
                 // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
                 options.UseAspNetCore()
@@ -94,7 +125,8 @@ namespace SimpleAuth.Infrastructure
                        .EnableLogoutEndpointPassthrough()
                        .EnableTokenEndpointPassthrough()
                        .EnableUserinfoEndpointPassthrough()
-                       .EnableStatusCodePagesIntegration();
+                       .EnableStatusCodePagesIntegration()
+                       .DisableTransportSecurityRequirement();
             })
 
             // Register the OpenIddict validation components.

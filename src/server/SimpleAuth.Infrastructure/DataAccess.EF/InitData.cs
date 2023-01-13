@@ -23,7 +23,6 @@ public class InitData : IHostedService
     {
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<SimpleAuthContext>();
-        //var env = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
         await context.Database.MigrateAsync(cancellationToken);
 
@@ -91,11 +90,8 @@ public class InitData : IHostedService
                 new Uri("http://localhost:8080/signin-callback"),
                 new Uri("http://localhost:8080/silent-callback.html")
             },
-            new[]
-            {
-                new Uri("http://localhost:8080"),
-                new Uri("http://localhost:8080/signin-callback")
-            }, new[] { Permissions.Prefixes.Scope + "pictures-api" }, cancellationToken);
+            new[] { new Uri("http://localhost:8080") },
+            new[] { Permissions.Prefixes.Scope + "pictures-api" }, cancellationToken);
     }
 
     private static async Task CreateOrUpdateConfidentialClient(IServiceProvider serviceProvider, string clientId, string clientSecret, string displayName,

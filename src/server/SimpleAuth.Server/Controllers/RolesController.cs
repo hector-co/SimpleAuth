@@ -4,9 +4,11 @@ using SimpleAuth.Application.Queries.Roles;
 using SimpleAuth.Application.Commands.Roles;
 using QueryX;
 using SimpleAuth.Server.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SimpleAuth.Server.Controllers;
 
+[Authorize(Roles = "AuthAdmin")]
 [Route("api/roles")]
 public class RolesController : ControllerBase
 {

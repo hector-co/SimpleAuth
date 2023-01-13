@@ -2,8 +2,18 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using SimpleAuth.Infrastructure;
 using SimpleAuth.Server.ExceptionHandling;
+using Microsoft.AspNetCore.HttpOverrides;
+using SimpleAuth.Application;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -28,24 +38,29 @@ builder.Services.AddSwaggerGen(options =>
     options.DescribeAllParametersInCamelCase();
 });
 
+var serverSettings = builder.Configuration.GetSection(ServerSettingsOption.ServerSettings).Get<ServerSettingsOption>();
+
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    var serverUrl = new Uri(serverSettings.ServerUrl);
+    var httpsHostString = new HostString(serverUrl.Host, serverUrl.Port);
+    context.Request.Host = httpsHostString;
+    await next.Invoke();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
-    //app.UseExceptionHandler("/Error");    
-}
-else
-{
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    //app.UseExceptionHandler("/Error");
 }
 
-app.UseHttpsRedirection();
+// Replace with registered clients?
+app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
 app.UseStaticFiles();
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
