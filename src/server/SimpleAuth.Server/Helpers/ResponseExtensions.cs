@@ -1,6 +1,6 @@
 using System.Net;
 using SimpleAuth.Server.ExceptionHandling;
-using SimpleAuth.Domain.Abstractions;
+using SimpleAuth.Domain.Common;
 
 namespace SimpleAuth.Server.Helpers;
 

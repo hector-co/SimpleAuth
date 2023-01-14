@@ -1,8 +1,8 @@
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using SimpleAuth.Domain.Model;
-using SimpleAuth.Application.Abstractions.Queries;
-using SimpleAuth.Application.Queries.Roles;
+using SimpleAuth.Application.Common.Queries;
+using SimpleAuth.Application.Roles.Queries;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Roles.Queries;
 

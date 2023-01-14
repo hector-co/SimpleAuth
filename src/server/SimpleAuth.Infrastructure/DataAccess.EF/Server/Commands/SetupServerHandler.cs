@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using OpenIddict.Core;
 using OpenIddict.EntityFrameworkCore.Models;
-using SimpleAuth.Application.Abstractions.Commands;
-using SimpleAuth.Application.Commands.Server;
-using SimpleAuth.Domain.Abstractions;
+using SimpleAuth.Domain.Common;
 using SimpleAuth.Domain.Model;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.Text.Json;
+using SimpleAuth.Application.Common.Commands;
+using SimpleAuth.Application.Server.Commands;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Server.Commands;
 

@@ -3,8 +3,8 @@ using System.Text.Json;
 using SimpleAuth.Infrastructure;
 using SimpleAuth.Server.ExceptionHandling;
 using Microsoft.AspNetCore.HttpOverrides;
-using SimpleAuth.Application;
 using Microsoft.AspNetCore.Builder;
+using SimpleAuth.Application.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 

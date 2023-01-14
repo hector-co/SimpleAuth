@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using SimpleAuth.Application;
-using SimpleAuth.Application.Commands.Server;
+using SimpleAuth.Application.Server;
+using SimpleAuth.Application.Server.Commands;
 using System.Text.Json;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF;

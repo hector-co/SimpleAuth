@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SimpleAuth.Domain.Model;
-using SimpleAuth.Domain.Abstractions;
-using SimpleAuth.Application.Abstractions.Commands;
-using SimpleAuth.Application.Commands.Users;
+using SimpleAuth.Domain.Common;
+using SimpleAuth.Application.Common.Commands;
+using SimpleAuth.Application.Users.Commands;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Users.Commands;
 

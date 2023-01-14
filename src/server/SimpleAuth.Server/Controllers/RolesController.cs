@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using SimpleAuth.Application.Queries.Roles;
-using SimpleAuth.Application.Commands.Roles;
 using QueryX;
 using SimpleAuth.Server.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using SimpleAuth.Application.Roles.Commands;
+using SimpleAuth.Application.Roles.Queries;
 
 namespace SimpleAuth.Server.Controllers;
 
