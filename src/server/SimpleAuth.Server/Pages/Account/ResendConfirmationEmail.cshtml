@@ -10,12 +10,12 @@
         <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
         <hr />
             <partial name="_StatusMessage" for="StatusMessage" />
-            <div class="form-floating">
-                <input asp-for="Input.Email" class="form-control" aria-required="true" />
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Email" class="form-control" aria-required="true" placeholder="" />
                 <label asp-for="Input.Email" class="form-label"></label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Resend</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary mb-3">Resend</button>
         </form>
     </div>
 </div>
