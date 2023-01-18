@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using SimpleAuth.Application;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Server.Models;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace SimpleAuth.Server.Pages.Account
 {
@@ -52,8 +53,12 @@ namespace SimpleAuth.Server.Pages.Account
         public class InputModel
         {
             [Required]
-            [Display(Name = "Display name")]
-            public string DisplayName { get; set; } = string.Empty;
+            [Display(Name = "Name")]
+            public string Name { get; set; } = string.Empty;
+
+            [Required]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; } = string.Empty;
 
             [Required]
             [EmailAddress]
@@ -87,10 +92,20 @@ namespace SimpleAuth.Server.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var user = new User
+                {
+                    Name = Input.Name,
+                    LastName = Input.LastName,
+                    Claims = new List<UserClaim>
+                    {
+                        new UserClaim { ClaimType = Claims.GivenName, ClaimValue = Input.Name },
+                        new UserClaim { ClaimType = Claims.FamilyName, ClaimValue = Input.LastName }
+                    }
+                };
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 var defaultRoles = await _roleManager.Roles.Where(r => r.AssignByDefault)
@@ -134,20 +149,6 @@ namespace SimpleAuth.Server.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return Page();
-        }
-
-        private User CreateUser()
-        {
-            try
-            {
-                return Activator.CreateInstance<User>();
-            }
-            catch
-            {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(User)}'. " +
-                    $"Ensure that '{nameof(User)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
-            }
         }
 
         private IUserEmailStore<User> GetEmailStore()

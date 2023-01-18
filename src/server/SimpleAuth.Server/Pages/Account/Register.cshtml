@@ -13,9 +13,14 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <partial name="_StatusMessage" for="StatusMessage" />
             <div class="form-floating">
-                <input asp-for="Input.DisplayName" class="form-control" autocomplete="display-name" aria-required="true" />
-                <label asp-for="Input.DisplayName"></label>
-                <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
+                <input asp-for="Input.Name" class="form-control" autocomplete="name" aria-required="true" />
+                <label asp-for="Input.Name"></label>
+                <span asp-validation-for="Input.Name" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.LastName" class="form-control" autocomplete="last-name" aria-required="true" />
+                <label asp-for="Input.LastName"></label>
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
             </div>
             <div class="form-floating">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />

@@ -55,6 +55,13 @@ namespace SimpleAuth.Infrastructure
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<SimpleAuthContext>();
 
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.ClaimsIdentity.UserNameClaimType = Claims.Name;
+                options.ClaimsIdentity.UserIdClaimType = Claims.Subject;
+                options.ClaimsIdentity.RoleClaimType = Claims.Role;
+            });
+
             // OpenIddict offers native integration with Quartz.NET to perform scheduled tasks
             // (like pruning orphaned authorizations/tokens from the database) at regular intervals.
             builder.Services.AddQuartz(options =>
@@ -90,7 +97,6 @@ namespace SimpleAuth.Infrastructure
                        .SetAuthorizationEndpointUris("connect/authorize")
                        .SetLogoutEndpointUris("connect/logout")
                        .SetTokenEndpointUris("connect/token")
-                       .SetUserinfoEndpointUris("connect/userinfo")
                        .SetIntrospectionEndpointUris("/connect/introspect");
 
                 // Mark the "email", "profile" and "roles" scopes as supported scopes.

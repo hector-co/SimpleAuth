@@ -24,7 +24,6 @@ public class RegisterUserHandler : ICommandHandler<RegisterUser, string>
             Email = request.Email,
             EmailConfirmed = request.EmailConfirmed,
             PhoneNumber = request.PhoneNumber,
-            DisplayName = request.DisplayName,
             Name = request.Name,
             LastName = request.LastName,
             Roles = await _context.Set<Role>().Where(er => request.RolesId.Contains(er.Id)).ToListAsync(cancellationToken),

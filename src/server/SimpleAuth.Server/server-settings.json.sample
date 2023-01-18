@@ -1,0 +1,31 @@
+﻿{
+  "Roles": [
+    {
+      "Name": "",
+      "AssignByDefault": false
+    }
+  ],
+  "Scopes": [
+    {
+      "Name": "",
+      "DisplayName": ""
+    }
+  ],
+  "ConfidentialApps": [
+    {
+      "Id": "",
+      "Secret": "",
+      "DisplayName": "",
+      "Scopes": [ "" ]
+    }
+  ],
+  "PublicApps": [
+    {
+      "Id": "",
+      "DisplayName": "",
+      "RedirectUris": [ "" ],
+      "PostLogoutRedirectUris": [ "" ],
+      "Scopes": [ "" ]
+    }
+  ]
+}

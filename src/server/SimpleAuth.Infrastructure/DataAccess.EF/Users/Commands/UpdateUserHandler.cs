@@ -29,7 +29,6 @@ public class UpdateUserHandler : ICommandHandler<UpdateUser>
         user.Email = request.Email;
         user.EmailConfirmed = request.EmailConfirmed;
         user.PhoneNumber = request.PhoneNumber;
-        user.DisplayName = request.DisplayName;
         user.Name = request.Name;
         user.LastName = request.LastName;
         user.Roles = await _context.Set<Role>().Where(er => request.RolesId.Contains(er.Id)).ToListAsync(cancellationToken);

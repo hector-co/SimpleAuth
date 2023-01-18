@@ -23,8 +23,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(256);
         builder.Property(m => m.Email)
             .HasMaxLength(256);
-        builder.Property(m => m.DisplayName)
-            .HasMaxLength(256);
         builder.Property(m => m.Name)
             .HasMaxLength(256);
         builder.Property(m => m.LastName)

@@ -42,10 +42,6 @@
         },
         "EmailConfirmed": "bool",
         "PhoneNumber": "string",
-        "DisplayName": {
-          "typeName": "string",
-          "size": 256
-        },
         "Name": {
           "typeName": "string",
           "size": 256

@@ -10,8 +10,6 @@ public class UpdateUserValidator : AbstractValidator<UpdateUser>
             .MaximumLength(256);
         RuleFor(c => c.Email)
             .MaximumLength(256);
-        RuleFor(c => c.DisplayName)
-            .MaximumLength(256);
         RuleFor(c => c.Name)
             .MaximumLength(256);
         RuleFor(c => c.LastName)

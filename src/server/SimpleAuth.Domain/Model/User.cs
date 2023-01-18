@@ -12,7 +12,6 @@ public partial class User : IdentityUser
 
     public List<Role> Roles { get; set; }
     public List<UserClaim> Claims { get; set; }
-    public string DisplayName { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
 }

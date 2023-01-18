@@ -132,6 +132,8 @@ public class AuthorizationController : Controller
                 identity.SetClaim(Claims.Subject, await _userManager.GetUserIdAsync(user))
                         .SetClaim(Claims.Email, await _userManager.GetEmailAsync(user))
                         .SetClaim(Claims.Name, await _userManager.GetUserNameAsync(user))
+                        .SetClaim(Claims.GivenName, user.Name)
+                        .SetClaim(Claims.FamilyName, user.LastName)
                         .SetClaims(Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray());
 
                 // Note: in this sample, the granted scopes match the requested scope
@@ -226,6 +228,8 @@ public class AuthorizationController : Controller
         identity.SetClaim(Claims.Subject, await _userManager.GetUserIdAsync(user))
                 .SetClaim(Claims.Email, await _userManager.GetEmailAsync(user))
                 .SetClaim(Claims.Name, await _userManager.GetUserNameAsync(user))
+                .SetClaim(Claims.GivenName, user.Name)
+                .SetClaim(Claims.FamilyName, user.LastName)
                 .SetClaims(Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray());
 
         // Note: in this sample, the granted scopes match the requested scope
@@ -322,6 +326,8 @@ public class AuthorizationController : Controller
             identity.SetClaim(Claims.Subject, await _userManager.GetUserIdAsync(user))
                     .SetClaim(Claims.Email, await _userManager.GetEmailAsync(user))
                     .SetClaim(Claims.Name, await _userManager.GetUserNameAsync(user))
+                    .SetClaim(Claims.GivenName, user.Name)
+                    .SetClaim(Claims.FamilyName, user.LastName)
                     .SetClaims(Claims.Role, (await _userManager.GetRolesAsync(user)).ToImmutableArray());
 
             identity.SetDestinations(GetDestinations);

@@ -33,7 +33,7 @@ public class InitData : IHostedService
     private static async Task AddData(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         var serverSettings = serviceProvider.GetRequiredService<IOptions<ServerSettingsOption>>().Value;
-        var settingsFileName = $"{serverSettings.SetupFilePath}/server-settings.json";
+        var settingsFileName = $"{serverSettings.SetupFilePath}/auth-server-settings.json";
         if (!File.Exists(settingsFileName))
             return;
 

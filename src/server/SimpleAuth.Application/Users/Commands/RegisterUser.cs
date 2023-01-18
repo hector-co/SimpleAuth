@@ -10,7 +10,6 @@ public record RegisterUser
     string Email,
     bool EmailConfirmed,
     string PhoneNumber,
-    string DisplayName,
     string Name,
     string LastName
 ) : ICommand<string>
