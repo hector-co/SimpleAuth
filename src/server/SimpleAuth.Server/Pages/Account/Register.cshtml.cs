@@ -57,7 +57,7 @@ namespace SimpleAuth.Server.Pages.Account
             public string Name { get; set; } = string.Empty;
 
             [Required]
-            [Display(Name = "Last Name")]
+            [Display(Name = "Last name")]
             public string LastName { get; set; } = string.Empty;
 
             [Required]
