@@ -3,7 +3,6 @@ using System.Text.Json;
 using SimpleAuth.Infrastructure;
 using SimpleAuth.Server.ExceptionHandling;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Builder;
 using SimpleAuth.Application.Server;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +15,10 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/Account/Manage");
+});
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
