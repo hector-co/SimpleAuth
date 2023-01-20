@@ -168,6 +168,13 @@ namespace SimpleAuth.Infrastructure
 
             builder.Services.AddHostedService<InitData>();
 
+            builder.Services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                });
+
             return builder;
         }
     }
