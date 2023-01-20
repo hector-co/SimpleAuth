@@ -57,17 +57,22 @@
                 </div>
             </form>
         </section>
-        <hr />
-        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-            <div>
-                <p>
-                    @foreach (var provider in Model.ExternalLogins)
-                    {
-                        <button type="submit" class="w-100 btn btn-primary mt-3" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">Login with&nbsp;@provider.DisplayName</button>
-                    }
-                </p>
-            </div>
-        </form>
+        @{
+            if (Model.ExternalLogins != null && Model.ExternalLogins.Count > 0)
+            {
+                <hr />
+                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                    <div>
+                        <p>
+                            @foreach (var provider in Model.ExternalLogins)
+                            {
+                                <button type="submit" class="w-100 btn btn-primary mt-3" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">Login with&nbsp;@provider.DisplayName</button>
+                            }
+                        </p>
+                    </div>
+                </form>
+            }
+        }
     </div>
 </div>
 

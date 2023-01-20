@@ -168,12 +168,20 @@ namespace SimpleAuth.Infrastructure
 
             builder.Services.AddHostedService<InitData>();
 
-            builder.Services.AddAuthentication()
+            builder.Services.Configure<AuthProvidersOption>(
+                builder.Configuration.GetSection(AuthProvidersOption.AuthProviders));
+
+            var authProviders = builder.Configuration.GetSection(AuthProvidersOption.AuthProviders).Get<AuthProvidersOption>();
+
+            if (!string.IsNullOrEmpty(authProviders?.Google?.ClientId) && !string.IsNullOrEmpty(authProviders?.Google?.ClientSecret))
+            {
+                builder.Services.AddAuthentication()
                 .AddGoogle(options =>
                 {
-                    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-                    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                    options.ClientId = authProviders.Google.ClientId;
+                    options.ClientSecret = authProviders.Google.ClientSecret;
                 });
+            }
 
             return builder;
         }
