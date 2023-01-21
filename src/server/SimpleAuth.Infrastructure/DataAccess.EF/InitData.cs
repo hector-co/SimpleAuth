@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SimpleAuth.Application.Server;
 using SimpleAuth.Application.Server.Commands;
+using SimpleAuth.Domain.Model;
 using System.Text.Json;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF;
@@ -32,6 +33,13 @@ public class InitData : IHostedService
 
     private static async Task AddData(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
+        var context = serviceProvider.GetRequiredService<SimpleAuthContext>();
+        if (!await context.Set<Setting>().AnyAsync(cancellationToken))
+        {
+            context.Add(new Setting(false));
+            await context.SaveChangesAsync(cancellationToken);
+        }
+
         var serverSettings = serviceProvider.GetRequiredService<IOptions<ServerSettingsOption>>().Value;
         var settingsFileName = $"{serverSettings.SetupFilePath}/auth-server-settings.json";
         if (!File.Exists(settingsFileName))

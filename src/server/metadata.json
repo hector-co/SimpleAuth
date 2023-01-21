@@ -7,6 +7,11 @@
     "ApiControllersNamespace": "Server.Controllers"
   },
   "model": {
+    "Setting": {
+      "properties": {
+        "AllowSelfRegistration": "bool"
+      }
+    },
     "Role": {
       "properties": {
         "Name": {
@@ -14,7 +19,7 @@
           "size": 256
         },
         "Claims": "List<RoleClaim>",
-        "AssignByDefault": "bool",
+        "AssignByDefault": "bool"
       },
       "IdentifierType": "string"
     },

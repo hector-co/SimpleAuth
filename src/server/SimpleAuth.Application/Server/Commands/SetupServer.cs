@@ -4,6 +4,7 @@ namespace SimpleAuth.Application.Server.Commands;
 
 public record SetupServer
 (
+    bool AllowSelfRegistration,
     List<SetupServer.SetupRole> Roles,
     List<SetupServer.SetupScopes> Scopes,
     List<SetupServer.ConfidentialApp> ConfidentialApps,

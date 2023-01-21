@@ -263,6 +263,9 @@ Introduzca a continuación una dirección de correo electrónico para este sitio
   <data name="Update password" xml:space="preserve">
     <value>Actualizar contraseña</value>
   </data>
+  <data name="User not found." xml:space="preserve">
+    <value>Usuario no encontrado.</value>
+  </data>
   <data name="Verification email sent. Please check your email." xml:space="preserve">
     <value>Correo electrónico de verificación enviado. Por favor, revise su correo electrónico.</value>
   </data>

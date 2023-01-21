@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenIddict.EntityFrameworkCore.Models;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Infrastructure.DataAccess.EF.Roles;
+using SimpleAuth.Infrastructure.DataAccess.EF.Settings;
 using SimpleAuth.Infrastructure.DataAccess.EF.Users;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF;
@@ -24,6 +25,7 @@ public class SimpleAuthContext
 
     public static void Configure(ModelBuilder modelBuilder, string dbSchema = DbSchema)
     {
+        modelBuilder.ApplyConfiguration(new SettingConfiguration(dbSchema));
         modelBuilder.ApplyConfiguration(new RoleConfiguration(dbSchema));
         modelBuilder.ApplyConfiguration(new RoleClaimConfiguration(dbSchema));
         modelBuilder.ApplyConfiguration(new UserConfiguration(dbSchema));

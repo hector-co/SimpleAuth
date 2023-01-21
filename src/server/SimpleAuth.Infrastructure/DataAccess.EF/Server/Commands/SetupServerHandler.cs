@@ -7,6 +7,7 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.Text.Json;
 using SimpleAuth.Application.Common.Commands;
 using SimpleAuth.Application.Server.Commands;
+using Microsoft.EntityFrameworkCore;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Server.Commands;
 
@@ -15,17 +16,23 @@ public class SetupServerHandler : ICommandHandler<SetupServer>
     private readonly RoleManager<Role> _roleManager;
     private readonly OpenIddictApplicationManager<OpenIddictEntityFrameworkCoreApplication<int>> _appManager;
     private readonly OpenIddictScopeManager<OpenIddictEntityFrameworkCoreScope<int>> _scopeManager;
+    private readonly SimpleAuthContext _context;
 
     public SetupServerHandler(RoleManager<Role> roleManager, OpenIddictApplicationManager<OpenIddictEntityFrameworkCoreApplication<int>> appManager,
-        OpenIddictScopeManager<OpenIddictEntityFrameworkCoreScope<int>> scopeManager)
+        OpenIddictScopeManager<OpenIddictEntityFrameworkCoreScope<int>> scopeManager, SimpleAuthContext context)
     {
         _roleManager = roleManager;
         _appManager = appManager;
         _scopeManager = scopeManager;
+        _context = context;
     }
 
     public async Task<Response> Handle(SetupServer request, CancellationToken cancellationToken)
     {
+        var setting = await _context.Set<Setting>().FirstAsync(cancellationToken);
+        setting.AllowSelfRegistration = request.AllowSelfRegistration;
+        await _context.SaveChangesAsync(cancellationToken);
+
         await SetupRoles(request.Roles);
 
         var scopes = request.Scopes.ToDictionary(s => s.Name, s => (s.DisplayName, Resources: new List<string>()));

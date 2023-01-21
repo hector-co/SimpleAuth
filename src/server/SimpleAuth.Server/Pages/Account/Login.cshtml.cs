@@ -1,12 +1,14 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using OpenIddict.Abstractions;
+using SimpleAuth.Application.Settings.Queries;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Server.Models;
 using SimpleAuth.Server.Resources.Localizers;
@@ -19,14 +21,16 @@ namespace SimpleAuth.Server.Pages.Account
         private readonly IOpenIddictApplicationManager _applicationManager;
         private readonly SharedResourceLocalizer _sharedLocalizer;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IMediator _mediator;
 
         public LoginModel(SignInManager<User> signInManager, IOpenIddictApplicationManager applicationManager,
-            SharedResourceLocalizer sharedLocalizer, ILogger<LoginModel> logger)
+            SharedResourceLocalizer sharedLocalizer, ILogger<LoginModel> logger, IMediator mediator)
         {
             _signInManager = signInManager;
             _applicationManager = applicationManager;
             _sharedLocalizer = sharedLocalizer;
             _logger = logger;
+            _mediator = mediator;
         }
 
         [BindProperty]
@@ -39,6 +43,8 @@ namespace SimpleAuth.Server.Pages.Account
         public string? StatusMessage { get; set; }
 
         public string? ApplicationName { get; set; }
+
+        public bool ShowRegistrationLink { get; set; }
 
         public class InputModel
         {
@@ -80,6 +86,10 @@ namespace SimpleAuth.Server.Pages.Account
 
         public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
         {
+            var setting = (await _mediator.Send(new GetSettingDto())).Data;
+
+            ShowRegistrationLink = setting?.AllowSelfRegistration ?? false;
+
             ApplicationName = await GetApplicationName(returnUrl);
 
             if (User.Identity?.IsAuthenticated ?? false)

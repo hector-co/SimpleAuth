@@ -18,9 +18,9 @@ using Serilog;
 using SimpleAuth.Application;
 using SimpleAuth.Application.Common.Behaviors;
 using SimpleAuth.Application.Server;
+using SimpleAuth.Application.Settings.Queries;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Infrastructure.DataAccess.EF;
-using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 

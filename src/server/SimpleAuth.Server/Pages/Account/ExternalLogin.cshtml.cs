@@ -13,6 +13,9 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.ComponentModel;
 using SimpleAuth.Server.Resources.Localizers;
 using Microsoft.EntityFrameworkCore;
+using MediatR;
+using SimpleAuth.Application.Settings.Queries;
+using SimpleAuth.Server.Models;
 
 namespace SimpleAuth.Server.Pages.Account
 {
@@ -28,6 +31,7 @@ namespace SimpleAuth.Server.Pages.Account
         private readonly SharedResourceLocalizer _sharedLocalizer;
         private readonly EmailResourceLocalizer _emailLocalizer;
         private readonly ILogger<ExternalLoginModel> _logger;
+        private readonly IMediator _mediator;
 
         public ExternalLoginModel(
             SignInManager<User> signInManager,
@@ -37,7 +41,8 @@ namespace SimpleAuth.Server.Pages.Account
             SharedResourceLocalizer sharedLocalizer,
             EmailResourceLocalizer emailLocalizer,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IMediator mediator)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -48,6 +53,7 @@ namespace SimpleAuth.Server.Pages.Account
             _emailLocalizer = emailLocalizer;
             _logger = logger;
             _emailSender = emailSender;
+            _mediator = mediator;
         }
 
         [BindProperty]
@@ -80,13 +86,13 @@ namespace SimpleAuth.Server.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (remoteError != null)
             {
-                TempData["TemStatusMessage"] = _sharedLocalizer["Error from external provider", remoteError];
+                TempData["TempStatusMessage"] = _sharedLocalizer["Error from external provider", remoteError];
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                TempData["TemStatusMessage"] = _sharedLocalizer["Error loading external login information."];
+                TempData["TempStatusMessage"] = _sharedLocalizer["Error loading external login information."];
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -99,10 +105,18 @@ namespace SimpleAuth.Server.Pages.Account
             }
             if (result.IsLockedOut)
             {
-                return RedirectToPage("./Lockout");
+                TempData["TempStatusMessage"] = StatusMessageModel.ErrorMessage(_sharedLocalizer["This account has been locked out, please try again later."]);
+                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
             else
             {
+                var setting = (await _mediator.Send(new GetSettingDto())).Data!;
+                if (!setting.AllowSelfRegistration)
+                {
+                    TempData["TempStatusMessage"] = StatusMessageModel.ErrorMessage(_sharedLocalizer["User not found."]);
+                    return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
+                }
+
                 // If the user does not have an account, then ask the user to create an account.
                 ReturnUrl = returnUrl;
                 ProviderDisplayName = info.ProviderDisplayName;

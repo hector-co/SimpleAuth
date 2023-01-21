@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using SimpleAuth.Application;
+using SimpleAuth.Application.Settings.Queries;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Server.Models;
 using SimpleAuth.Server.Resources.Localizers;
@@ -26,6 +28,7 @@ namespace SimpleAuth.Server.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly EmailResourceLocalizer _emailLocalizer;
+        private readonly IMediator _mediator;
 
         public RegisterModel(
             UserManager<User> userManager,
@@ -34,7 +37,8 @@ namespace SimpleAuth.Server.Pages.Account
             SignInManager<User> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            EmailResourceLocalizer emailLocalizer)
+            EmailResourceLocalizer emailLocalizer,
+            IMediator mediator)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -44,6 +48,7 @@ namespace SimpleAuth.Server.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _emailLocalizer = emailLocalizer;
+            _mediator = mediator;
         }
 
         [BindProperty]
@@ -85,6 +90,13 @@ namespace SimpleAuth.Server.Pages.Account
 
         public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
         {
+            var setting = (await _mediator.Send(new GetSettingDto())).Data;
+
+            if (setting == null || !setting.AllowSelfRegistration)
+            {
+                return RedirectToPage("/Login");
+            }
+
             if (User.Identity?.IsAuthenticated ?? false)
                 return RedirectToPage("/Manage");
 

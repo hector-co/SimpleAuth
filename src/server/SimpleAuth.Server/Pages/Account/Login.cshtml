@@ -47,7 +47,10 @@
                 <div class="row">
                     <div class="col">
                         <p>
-                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">@SharedLocalizer["Register as a new user"]</a>
+                            @if (Model.ShowRegistrationLink)
+                            {
+                                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">@SharedLocalizer["Register as a new user"]</a>
+                            }
                         </p>
                     </div>
                     <div class="col">
