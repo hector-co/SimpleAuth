@@ -29,7 +29,7 @@ public class SetupServerHandler : ICommandHandler<SetupServer>
 
     public async Task<Response> Handle(SetupServer request, CancellationToken cancellationToken)
     {
-        var setting = await _context.Set<Setting>().FirstAsync(cancellationToken);
+        var setting = await _context.Set<ServerSettings>().FirstAsync(cancellationToken);
         setting.AllowSelfRegistration = request.AllowSelfRegistration;
         await _context.SaveChangesAsync(cancellationToken);
 

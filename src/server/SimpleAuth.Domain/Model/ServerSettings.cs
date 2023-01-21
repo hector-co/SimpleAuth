@@ -1,12 +1,12 @@
 namespace SimpleAuth.Domain.Model;
 
-public partial class Setting
+public partial class ServerSettings
 {
 #nullable disable
-    private Setting() { }
+    private ServerSettings() { }
 #nullable enable
 
-    public Setting(bool allowSelfRegistration)
+    public ServerSettings(bool allowSelfRegistration)
     {
         AllowSelfRegistration = allowSelfRegistration;
     }

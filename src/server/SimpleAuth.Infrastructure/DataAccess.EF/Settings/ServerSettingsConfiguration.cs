@@ -6,17 +6,17 @@ using SimpleAuth.Domain.Model;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Settings;
 
-public class SettingConfiguration : IEntityTypeConfiguration<Setting>
+public class ServerSettingsConfiguration : IEntityTypeConfiguration<ServerSettings>
 {
     private readonly string _dbSchema;
 
-    public SettingConfiguration(string dbSchema)
+    public ServerSettingsConfiguration(string dbSchema)
     {
         _dbSchema = dbSchema;
     }
 
-    public void Configure(EntityTypeBuilder<Setting> builder)
+    public void Configure(EntityTypeBuilder<ServerSettings> builder)
     {
-        builder.ToTable("Setting", _dbSchema);
+        builder.ToTable("ServerSettings", _dbSchema);
     }
 }

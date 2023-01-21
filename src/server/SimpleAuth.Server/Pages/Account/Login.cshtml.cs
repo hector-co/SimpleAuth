@@ -86,9 +86,9 @@ namespace SimpleAuth.Server.Pages.Account
 
         public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
         {
-            var setting = (await _mediator.Send(new GetSettingDto())).Data;
+            var serverSettings = (await _mediator.Send(new GetServerSettingsDto())).Data;
 
-            ShowRegistrationLink = setting?.AllowSelfRegistration ?? false;
+            ShowRegistrationLink = serverSettings?.AllowSelfRegistration ?? false;
 
             ApplicationName = await GetApplicationName(returnUrl);
 

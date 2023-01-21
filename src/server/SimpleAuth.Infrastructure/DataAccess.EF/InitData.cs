@@ -34,9 +34,9 @@ public class InitData : IHostedService
     private static async Task AddData(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         var context = serviceProvider.GetRequiredService<SimpleAuthContext>();
-        if (!await context.Set<Setting>().AnyAsync(cancellationToken))
+        if (!await context.Set<ServerSettings>().AnyAsync(cancellationToken))
         {
-            context.Add(new Setting(false));
+            context.Add(new ServerSettings(true));
             await context.SaveChangesAsync(cancellationToken);
         }
 

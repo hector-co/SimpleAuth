@@ -1,5 +1,5 @@
 namespace SimpleAuth.Application.Settings.Queries;
 
-public record SettingDto(
+public record ServerSettingsDto(
     int Id,
     bool AllowSelfRegistration);

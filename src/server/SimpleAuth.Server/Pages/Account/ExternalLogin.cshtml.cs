@@ -110,7 +110,7 @@ namespace SimpleAuth.Server.Pages.Account
             }
             else
             {
-                var setting = (await _mediator.Send(new GetSettingDto())).Data!;
+                var setting = (await _mediator.Send(new GetServerSettingsDto())).Data!;
                 if (!setting.AllowSelfRegistration)
                 {
                     TempData["TempStatusMessage"] = StatusMessageModel.ErrorMessage(_sharedLocalizer["User not found."]);

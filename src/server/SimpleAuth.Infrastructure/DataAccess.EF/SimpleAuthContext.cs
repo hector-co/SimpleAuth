@@ -25,7 +25,7 @@ public class SimpleAuthContext
 
     public static void Configure(ModelBuilder modelBuilder, string dbSchema = DbSchema)
     {
-        modelBuilder.ApplyConfiguration(new SettingConfiguration(dbSchema));
+        modelBuilder.ApplyConfiguration(new ServerSettingsConfiguration(dbSchema));
         modelBuilder.ApplyConfiguration(new RoleConfiguration(dbSchema));
         modelBuilder.ApplyConfiguration(new RoleClaimConfiguration(dbSchema));
         modelBuilder.ApplyConfiguration(new UserConfiguration(dbSchema));

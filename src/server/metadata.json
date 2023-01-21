@@ -7,7 +7,7 @@
     "ApiControllersNamespace": "Server.Controllers"
   },
   "model": {
-    "Setting": {
+    "ServerSettings": {
       "properties": {
         "AllowSelfRegistration": "bool"
       }

@@ -6,21 +6,21 @@ using SimpleAuth.Application.Settings.Queries;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Settings.Queries;
 
-public class GetSettingDtoHandler : IQueryHandler<GetSettingDto, SettingDto>
+public class GetServerSettingsDtoHandler : IQueryHandler<GetServerSettingsDto, ServerSettingsDto>
 {
     private readonly SimpleAuthContext _context;
 
-    public GetSettingDtoHandler(SimpleAuthContext context)
+    public GetServerSettingsDtoHandler(SimpleAuthContext context)
     {
         _context = context;
     }
 
-    public async Task<Result<SettingDto>> Handle(GetSettingDto request, CancellationToken cancellationToken)
+    public async Task<Result<ServerSettingsDto>> Handle(GetServerSettingsDto request, CancellationToken cancellationToken)
     {
-        var data = await _context.Set<Setting>()
+        var data = await _context.Set<ServerSettings>()
             .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
 
-        return new Result<SettingDto>(data?.Adapt<SettingDto>());
+        return new Result<ServerSettingsDto>(data?.Adapt<ServerSettingsDto>());
     }
 }
