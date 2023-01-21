@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SimpleAuth.Domain.Model;
+using SimpleAuth.Server.ExceptionHandling;
 using SimpleAuth.Server.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace SimpleAuth.Server.Pages.Account.Manage
 {
@@ -45,7 +47,7 @@ namespace SimpleAuth.Server.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                throw new WebApiException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.", HttpStatusCode.NotFound, WebApiException.DataAccessError);
             }
 
             var hasPassword = await _userManager.HasPasswordAsync(user);
@@ -68,7 +70,7 @@ namespace SimpleAuth.Server.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                throw new WebApiException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.", HttpStatusCode.NotFound, WebApiException.DataAccessError);
             }
 
             var addPasswordResult = await _userManager.AddPasswordAsync(user, Input.NewPassword);

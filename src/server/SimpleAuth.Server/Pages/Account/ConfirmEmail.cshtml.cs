@@ -1,9 +1,11 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using SimpleAuth.Domain.Model;
+using SimpleAuth.Server.ExceptionHandling;
 using SimpleAuth.Server.Models;
 using SimpleAuth.Server.Resources.Localizers;
 
@@ -39,8 +41,7 @@ namespace SimpleAuth.Server.Pages.Account
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                TempData["TempStatusMessage"] = StatusMessageModel.ErrorMessage(_sharedLocalizer["Unable to load user."]);
-                return RedirectToPage("/Login");
+                throw new WebApiException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.", HttpStatusCode.NotFound, WebApiException.DataAccessError);
             }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));

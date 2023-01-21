@@ -12,6 +12,7 @@ using SimpleAuth.Domain.Model;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.ComponentModel;
 using SimpleAuth.Server.Resources.Localizers;
+using Microsoft.EntityFrameworkCore;
 
 namespace SimpleAuth.Server.Pages.Account
 {
@@ -20,6 +21,7 @@ namespace SimpleAuth.Server.Pages.Account
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly IUserStore<User> _userStore;
         private readonly IUserEmailStore<User> _emailStore;
         private readonly IEmailSender _emailSender;
@@ -30,6 +32,7 @@ namespace SimpleAuth.Server.Pages.Account
         public ExternalLoginModel(
             SignInManager<User> signInManager,
             UserManager<User> userManager,
+            RoleManager<Role> roleManager,
             IUserStore<User> userStore,
             SharedResourceLocalizer sharedLocalizer,
             EmailResourceLocalizer emailLocalizer,
@@ -38,6 +41,7 @@ namespace SimpleAuth.Server.Pages.Account
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _roleManager = roleManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _sharedLocalizer = sharedLocalizer;
@@ -146,6 +150,13 @@ namespace SimpleAuth.Server.Pages.Account
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
+                    var defaultRoles = await _roleManager.Roles.Where(r => r.AssignByDefault)
+                    .Select(r => r.Name).ToListAsync();
+                    if (defaultRoles.Count > 0)
+                    {
+                        await _userManager.AddToRolesAsync(user, defaultRoles);
+                    }
+
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {

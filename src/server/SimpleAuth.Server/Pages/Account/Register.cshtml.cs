@@ -119,15 +119,15 @@ namespace SimpleAuth.Server.Pages.Account
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
-                var defaultRoles = await _roleManager.Roles.Where(r => r.AssignByDefault)
-                    .Select(r => r.Name).ToListAsync();
-                if (defaultRoles.Count > 0)
-                {
-                    await _userManager.AddToRolesAsync(user, defaultRoles);
-                }
-
                 if (result.Succeeded)
                 {
+                    var defaultRoles = await _roleManager.Roles.Where(r => r.AssignByDefault)
+                    .Select(r => r.Name).ToListAsync();
+                    if (defaultRoles.Count > 0)
+                    {
+                        await _userManager.AddToRolesAsync(user, defaultRoles);
+                    }
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);

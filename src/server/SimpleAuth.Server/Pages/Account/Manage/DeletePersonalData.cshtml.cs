@@ -5,6 +5,8 @@ using SimpleAuth.Domain.Model;
 using System.ComponentModel.DataAnnotations;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.Security.Claims;
+using SimpleAuth.Server.ExceptionHandling;
+using System.Net;
 
 namespace SimpleAuth.Server.Pages.Account.Manage
 {
@@ -41,7 +43,7 @@ namespace SimpleAuth.Server.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                throw new WebApiException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.", HttpStatusCode.NotFound, WebApiException.DataAccessError);
             }
 
             RequirePassword = await _userManager.HasPasswordAsync(user);
@@ -53,7 +55,7 @@ namespace SimpleAuth.Server.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                throw new WebApiException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.", HttpStatusCode.NotFound, WebApiException.DataAccessError);
             }
 
             RequirePassword = await _userManager.HasPasswordAsync(user);
