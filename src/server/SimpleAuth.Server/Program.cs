@@ -5,9 +5,9 @@ using SimpleAuth.Server.ExceptionHandling;
 using Microsoft.AspNetCore.HttpOverrides;
 using SimpleAuth.Application.Server;
 using Microsoft.Extensions.Options;
-using SimpleAuth.Server.Resources;
 using System.Reflection;
 using SimpleAuth.Server.Resources.Localizers;
+using SimpleAuth.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 

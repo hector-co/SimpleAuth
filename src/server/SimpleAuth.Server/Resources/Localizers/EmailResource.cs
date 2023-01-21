@@ -1,4 +1,4 @@
-﻿namespace SimpleAuth.Server.Resources.Localizers;
+﻿namespace SimpleAuth.Server;
 
 public class EmailResource
 {
