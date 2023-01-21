@@ -83,7 +83,6 @@ namespace SimpleAuth.Server.Pages.Account
             public string ConfirmPassword { get; set; } = string.Empty;
         }
 
-
         public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
         {
             if (User.Identity?.IsAuthenticated ?? false)

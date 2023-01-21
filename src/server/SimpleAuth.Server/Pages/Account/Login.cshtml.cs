@@ -1,9 +1,12 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
+using OpenIddict.Abstractions;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Server.Models;
 using SimpleAuth.Server.Resources.Localizers;
@@ -13,12 +16,15 @@ namespace SimpleAuth.Server.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
+        private readonly IOpenIddictApplicationManager _applicationManager;
         private readonly SharedResourceLocalizer _sharedLocalizer;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<User> signInManager, SharedResourceLocalizer sharedLocalizer, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<User> signInManager, IOpenIddictApplicationManager applicationManager,
+            SharedResourceLocalizer sharedLocalizer, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _applicationManager = applicationManager;
             _sharedLocalizer = sharedLocalizer;
             _logger = logger;
         }
@@ -31,6 +37,8 @@ namespace SimpleAuth.Server.Pages.Account
         public string? ReturnUrl { get; set; }
 
         public string? StatusMessage { get; set; }
+
+        public string? ApplicationName { get; set; }
 
         public class InputModel
         {
@@ -48,14 +56,38 @@ namespace SimpleAuth.Server.Pages.Account
             public bool RememberMe { get; set; }
         }
 
+        private async Task<string?> GetApplicationName(string? returnUrl)
+        {
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                var parsedQuery = QueryHelpers.ParseQuery(returnUrl);
+                var clientIdKey = parsedQuery.Keys.FirstOrDefault(k => Regex.IsMatch(k, @".*\?client_id$"));
+                if (!string.IsNullOrEmpty(clientIdKey))
+                {
+                    var cliendId = parsedQuery[clientIdKey];
+
+                    var application = await _applicationManager.FindByClientIdAsync(cliendId);
+
+                    if (application == null)
+                        return "";
+
+                    return await _applicationManager.GetLocalizedDisplayNameAsync(application);
+                }
+            }
+
+            return "";
+        }
+
         public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
         {
+            ApplicationName = await GetApplicationName(returnUrl);
+
             if (User.Identity?.IsAuthenticated ?? false)
                 return RedirectToPage("/Manage");
 
             returnUrl ??= Url.Content("~/");
 
-            // Clear the existing external cookie to ensure a clean login process
+            // Clear the existing external cookie to ensure parsedQuery clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();

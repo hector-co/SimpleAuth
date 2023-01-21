@@ -14,10 +14,10 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-page="/Account/Register">@SharedLocalizer["Register"]</a>
+            <a class="nav-link text-dark" asp-page="/Account/Register" asp-route-returnUrl="@Model.ReturnUrl">@SharedLocalizer["Register"]</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-page="/Account/Login">@SharedLocalizer["Log in"]</a>
+            <a class="nav-link text-dark" asp-page="/Account/Login" asp-route-returnUrl="@Model.ReturnUrl">@SharedLocalizer["Log in"]</a>
         </li>
     }
 </ul>
