@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace SimpleAuth.Server.Pages.Account
@@ -8,10 +9,15 @@ namespace SimpleAuth.Server.Pages.Account
     {
         public string ReturnUrl { get; set; } = string.Empty;
         
-        public void OnGet(string? returnUrl)
+        public IActionResult OnGet(string? returnUrl)
         {
+            if (User.Identity?.IsAuthenticated ?? false)
+                return RedirectToPage("/Manage");
+
             returnUrl ??= Url.Content("~");
             ReturnUrl = returnUrl;
+
+            return Page();
         }
     }
 }

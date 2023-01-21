@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using SimpleAuth.Application;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Server.Models;
+using SimpleAuth.Server.Resources.Localizers;
 
 namespace SimpleAuth.Server.Pages.Account
 {
@@ -17,11 +19,16 @@ namespace SimpleAuth.Server.Pages.Account
     {
         private readonly UserManager<User> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly SharedResourceLocalizer _sharedLocalizer;
+        private readonly EmailResourceLocalizer _emailLocalizer;
 
-        public ResendConfirmationEmailModel(UserManager<User> userManager, IEmailSender emailSender)
+        public ResendConfirmationEmailModel(UserManager<User> userManager, IEmailSender emailSender, SharedResourceLocalizer sharedLocalizer, 
+            EmailResourceLocalizer emailLocalizer)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _sharedLocalizer = sharedLocalizer;
+            _emailLocalizer = emailLocalizer;
         }
 
         [BindProperty]
@@ -33,16 +40,22 @@ namespace SimpleAuth.Server.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Email")]
+            [EmailAddress(ErrorMessage = "Invalid email address.")]
             public string Email { get; set; } = string.Empty;
         }
 
-        public void OnGet(string? returnUrl)
+        public IActionResult OnGet(string? returnUrl)
         {
+            if (User.Identity?.IsAuthenticated ?? false)
+                return RedirectToPage("/Manage");
+
             returnUrl ??= Url.Content("~/");
 
             ReturnUrl = returnUrl;
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl)
@@ -58,7 +71,7 @@ namespace SimpleAuth.Server.Pages.Account
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user == null)
             {
-                StatusMessage = StatusMessageModel.SuccessMessage("Verification email sent. Please check your email.");
+                StatusMessage = StatusMessageModel.SuccessMessage(_sharedLocalizer["Verification email sent. Please check your email."]);
                 return Page();
             }
 
@@ -72,10 +85,10 @@ namespace SimpleAuth.Server.Pages.Account
                 protocol: Request.Scheme);
             await _emailSender.SendEmailAsync(
                 Input.Email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                _emailLocalizer["Confirm your email"],
+                _emailLocalizer["ConfirmEmailMessage", HtmlEncoder.Default.Encode(callbackUrl)]);
 
-            StatusMessage = StatusMessageModel.SuccessMessage("Verification email sent. Please check your email.");
+            StatusMessage = StatusMessageModel.SuccessMessage(_sharedLocalizer["Verification email sent. Please check your email."]);
 
             return Page();
         }

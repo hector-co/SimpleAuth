@@ -1,7 +1,7 @@
 ﻿@page
 @model RegisterModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = SharedLocalizer["Register"];
 }
 
 <h3 class="text-center">@ViewData["Title"]</h3>
@@ -37,7 +37,7 @@
                 <label asp-for="Input.ConfirmPassword"></label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary mb-3">Register</button>
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary mb-3">@SharedLocalizer["Register"]</button>
         </form>
         @{
             if (Model.ExternalLogins != null && Model.ExternalLogins.Count > 0)
@@ -48,7 +48,7 @@
                         <p>
                             @foreach (var provider in Model.ExternalLogins)
                             {
-                                <button type="submit" class="w-100 btn btn-primary mt-3" name="provider" value="@provider.Name" title="Register using your @provider.DisplayName account">Register using&nbsp;@provider.DisplayName</button>
+                                <button type="submit" class="w-100 btn btn-primary mt-3" name="provider" value="@provider.Name" title="Register using your @provider.DisplayName account">@SharedLocalizer["Register using", @provider.DisplayName!]</button>
                             }
                         </p>
                     </div>

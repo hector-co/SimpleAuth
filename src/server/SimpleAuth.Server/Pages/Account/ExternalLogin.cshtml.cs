@@ -10,6 +10,8 @@ using System.Text.Encodings.Web;
 using System.Text;
 using SimpleAuth.Domain.Model;
 using static OpenIddict.Abstractions.OpenIddictConstants;
+using System.ComponentModel;
+using SimpleAuth.Server.Resources.Localizers;
 
 namespace SimpleAuth.Server.Pages.Account
 {
@@ -21,12 +23,16 @@ namespace SimpleAuth.Server.Pages.Account
         private readonly IUserStore<User> _userStore;
         private readonly IUserEmailStore<User> _emailStore;
         private readonly IEmailSender _emailSender;
+        private readonly SharedResourceLocalizer _sharedLocalizer;
+        private readonly EmailResourceLocalizer _emailLocalizer;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
             SignInManager<User> signInManager,
             UserManager<User> userManager,
             IUserStore<User> userStore,
+            SharedResourceLocalizer sharedLocalizer,
+            EmailResourceLocalizer emailLocalizer,
             ILogger<ExternalLoginModel> logger,
             IEmailSender emailSender)
         {
@@ -34,6 +40,8 @@ namespace SimpleAuth.Server.Pages.Account
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
+            _sharedLocalizer = sharedLocalizer;
+            _emailLocalizer = emailLocalizer;
             _logger = logger;
             _emailSender = emailSender;
         }
@@ -45,13 +53,11 @@ namespace SimpleAuth.Server.Pages.Account
 
         public string ReturnUrl { get; set; } = string.Empty;
 
-        [TempData]
-        public string ErrorMessage { get; set; } = string.Empty;
-
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Email")]
+            [EmailAddress(ErrorMessage = "Invalid email address.")]
             public string Email { get; set; } = string.Empty;
         }
 
@@ -70,13 +76,13 @@ namespace SimpleAuth.Server.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (remoteError != null)
             {
-                ErrorMessage = $"Error from external provider: {remoteError}";
+                TempData["TemStatusMessage"] = _sharedLocalizer["Error from external provider", remoteError];
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information.";
+                TempData["TemStatusMessage"] = _sharedLocalizer["Error loading external login information."];
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -114,7 +120,7 @@ namespace SimpleAuth.Server.Pages.Account
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information during confirmation.";
+                TempData["TemStatusMessage"] = _sharedLocalizer["Error loading external login information during confirmation."];
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -151,11 +157,11 @@ namespace SimpleAuth.Server.Pages.Account
                         var callbackUrl = Url.Page(
                             "/Account/ConfirmEmail",
                             pageHandler: null,
-                            values: new { area = "Identity", userId = userId, code = code },
+                            values: new { area = "Identity", userId, code },
                             protocol: Request.Scheme);
 
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        await _emailSender.SendEmailAsync(Input.Email, _emailLocalizer["Confirm your email"],
+                            _emailLocalizer["ConfirmEmailMessage", HtmlEncoder.Default.Encode(callbackUrl)]);
 
                         // If account confirmation is required, we need to show the link if we don't have a real email sender
                         if (_userManager.Options.SignIn.RequireConfirmedAccount)

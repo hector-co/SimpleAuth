@@ -1,7 +1,7 @@
 ﻿@page
 @model ExternalLoginModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = SharedLocalizer["Register"];
 }
 
 <h3 class="text-center">@ViewData["Title"]</h3>
@@ -10,9 +10,7 @@
     <div class="col-md-8 col-lg-6 col-xl-5">
         <hr />
         <div class="alert alert-info" role="alert">
-            You've successfully authenticated with <strong>@Model.ProviderDisplayName</strong>.
-            Please enter an email address for this site below and click the Register button to finish
-            logging in.
+            @HtmlLocalizer["SuccessfullyAuthenticatedExternalLogin", Model.ProviderDisplayName]
         </div>
         <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -21,7 +19,7 @@
                 <label asp-for="Input.Email" class="form-label"></label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">@SharedLocalizer["Register"]</button>
         </form>
     </div>
 </div>

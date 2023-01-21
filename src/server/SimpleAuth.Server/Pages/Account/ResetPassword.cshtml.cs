@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,26 +28,33 @@ namespace SimpleAuth.Server.Pages.Account
 
         public class InputModel
         {
-            [Required]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Email")]
             [EmailAddress]
             public string Email { get; set; } = string.Empty;
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Password")]
+            [StringLength(100, ErrorMessage = "Minimum length field.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             public string Password { get; set; } = string.Empty;
 
-            [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [DataType(DataType.Password)]
             public string ConfirmPassword { get; set; } = string.Empty;
 
-            [Required]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Code")]
             public string Code { get; set; } = string.Empty;
         }
 
         public IActionResult OnGet(string? code = null, string? returnUrl = null)
         {
+            if (User.Identity?.IsAuthenticated ?? false)
+                return RedirectToPage("/Manage");
+
             returnUrl ??= Url.Content("~/");
             ReturnUrl = returnUrl;
 

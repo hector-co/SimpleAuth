@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,7 @@ using SimpleAuth.Application.Common.Behaviors;
 using SimpleAuth.Application.Server;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Infrastructure.DataAccess.EF;
+using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
@@ -182,6 +184,15 @@ namespace SimpleAuth.Infrastructure
                     options.ClientSecret = authProviders.Google.ClientSecret;
                 });
             }
+
+            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[] { "en", "es" };
+                options
+                    .SetDefaultCulture(supportedCultures[0])
+                    .AddSupportedCultures(supportedCultures)
+                    .AddSupportedUICultures(supportedCultures);
+            });
 
             return builder;
         }

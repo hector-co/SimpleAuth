@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -5,17 +6,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Server.Models;
+using SimpleAuth.Server.Resources.Localizers;
 
 namespace SimpleAuth.Server.Pages.Account
 {
     public class LoginModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
+        private readonly SharedResourceLocalizer _sharedLocalizer;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<User> signInManager, SharedResourceLocalizer sharedLocalizer, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _sharedLocalizer = sharedLocalizer;
             _logger = logger;
         }
 
@@ -30,20 +34,25 @@ namespace SimpleAuth.Server.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Email")]
+            [EmailAddress(ErrorMessage = "Invalid email address.")]
             public string Email { get; set; } = string.Empty;
 
-            [Required]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Password")]
             [DataType(DataType.Password)]
             public string Password { get; set; } = string.Empty;
 
-            [Display(Name = "Remember me?")]
+            [DisplayName("Remember me")]
             public bool RememberMe { get; set; }
         }
 
-        public async Task OnGetAsync(string? returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
         {
+            if (User.Identity?.IsAuthenticated ?? false)
+                return RedirectToPage("/Manage");
+
             returnUrl ??= Url.Content("~/");
 
             // Clear the existing external cookie to ensure a clean login process
@@ -54,6 +63,8 @@ namespace SimpleAuth.Server.Pages.Account
             StatusMessage = TempData["TempStatusMessage"]?.ToString();
 
             ReturnUrl = returnUrl;
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
@@ -80,12 +91,12 @@ namespace SimpleAuth.Server.Pages.Account
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
-                    StatusMessage = StatusMessageModel.ErrorMessage("This account has been locked out, please try again later.");
+                    StatusMessage = StatusMessageModel.ErrorMessage(_sharedLocalizer["This account has been locked out, please try again later."]);
                     return Page();
                 }
                 else
-                {   
-                    StatusMessage = StatusMessageModel.ErrorMessage("Invalid login attempt.");
+                {
+                    StatusMessage = StatusMessageModel.ErrorMessage(_sharedLocalizer["Invalid login attempt."]);
                     return Page();
                 }
             }

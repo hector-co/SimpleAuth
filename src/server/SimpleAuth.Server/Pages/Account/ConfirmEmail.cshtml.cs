@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using SimpleAuth.Domain.Model;
-using SimpleAuth.Server.Models;
 
 namespace SimpleAuth.Server.Pages.Account
 {
@@ -22,6 +21,9 @@ namespace SimpleAuth.Server.Pages.Account
 
         public async Task<IActionResult> OnGetAsync(string userId, string code, string? returnUrl)
         {
+            if (User.Identity?.IsAuthenticated ?? false)
+                return RedirectToPage("/Manage");
+
             returnUrl ??= Url.Content("~/");
             ReturnUrl = returnUrl;
 

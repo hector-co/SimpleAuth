@@ -26,6 +26,10 @@
   <ItemGroup>
     <ProjectReference Include="..\SimpleAuth.Application\SimpleAuth.Application.csproj" />
     <ProjectReference Include="..\SimpleAuth.Infrastructure\SimpleAuth.Infrastructure.csproj" />
+  </ItemGroup>  
+    
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

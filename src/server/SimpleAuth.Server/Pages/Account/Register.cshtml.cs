@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using SimpleAuth.Application;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Server.Models;
+using SimpleAuth.Server.Resources.Localizers;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace SimpleAuth.Server.Pages.Account
@@ -23,6 +25,7 @@ namespace SimpleAuth.Server.Pages.Account
         private readonly IUserEmailStore<User> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly EmailResourceLocalizer _emailLocalizer;
 
         public RegisterModel(
             UserManager<User> userManager,
@@ -30,7 +33,8 @@ namespace SimpleAuth.Server.Pages.Account
             IUserStore<User> userStore,
             SignInManager<User> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            EmailResourceLocalizer emailLocalizer)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -39,6 +43,7 @@ namespace SimpleAuth.Server.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _emailLocalizer = emailLocalizer;
         }
 
         [BindProperty]
@@ -52,36 +57,42 @@ namespace SimpleAuth.Server.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [Display(Name = "Name")]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Name")]
             public string Name { get; set; } = string.Empty;
 
-            [Required]
-            [Display(Name = "Last name")]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Last name")]
             public string LastName { get; set; } = string.Empty;
 
-            [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Email")]
+            [EmailAddress(ErrorMessage = "Invalid email address.")]
             public string Email { get; set; } = string.Empty;
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Password")]
+            [StringLength(100, ErrorMessage = "Minimum length field.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
             public string Password { get; set; } = string.Empty;
 
-            [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
+            [Required(ErrorMessage = "Required field.")]
+            [DisplayName("Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [DataType(DataType.Password)]
             public string ConfirmPassword { get; set; } = string.Empty;
         }
 
 
-        public async Task OnGetAsync(string? returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
         {
+            if (User.Identity?.IsAuthenticated ?? false)
+                return RedirectToPage("/Manage");
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
@@ -128,8 +139,8 @@ namespace SimpleAuth.Server.Pages.Account
                         values: new { userId, code, returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await _emailSender.SendEmailAsync(Input.Email, _emailLocalizer["Confirm your email"],
+                        _emailLocalizer["ConfirmEmailMessage", HtmlEncoder.Default.Encode(callbackUrl)]);
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

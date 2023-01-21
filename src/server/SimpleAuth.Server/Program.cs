@@ -4,6 +4,10 @@ using SimpleAuth.Infrastructure;
 using SimpleAuth.Server.ExceptionHandling;
 using Microsoft.AspNetCore.HttpOverrides;
 using SimpleAuth.Application.Server;
+using Microsoft.Extensions.Options;
+using SimpleAuth.Server.Resources;
+using System.Reflection;
+using SimpleAuth.Server.Resources.Localizers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,11 +18,22 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
 // Add services to the container.
 builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizeFolder("/Account/Manage");
-});
+})
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (type, factory) =>
+        {
+            var assembly = new AssemblyName(typeof(ModelValidationResource).Assembly.FullName!);
+            return factory.Create(nameof(ModelValidationResource), assembly.Name!);
+        };
+    });
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -28,6 +43,9 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     })
     .AddControllersAsServices();
+
+builder.Services.AddSingleton<SharedResourceLocalizer>();
+builder.Services.AddSingleton<EmailResourceLocalizer>();
 
 builder.RegisterDependencies();
 
@@ -76,5 +94,8 @@ app.MapRazorPages();
 
 app.MapControllers();
 app.MapDefaultControllerRoute();
+
+var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
+app.UseRequestLocalization(localizationOptions);
 
 app.Run();

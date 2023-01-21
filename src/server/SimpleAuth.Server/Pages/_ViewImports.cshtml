@@ -1,4 +1,9 @@
 ﻿@using SimpleAuth.Server
 @using SimpleAuth.Server.Models
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using SimpleAuth.Server.Resources.Localizers;
 @namespace SimpleAuth.Server.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<SharedResource> HtmlLocalizer
+@inject SharedResourceLocalizer SharedLocalizer
