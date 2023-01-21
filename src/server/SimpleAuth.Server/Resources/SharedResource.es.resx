@@ -120,6 +120,9 @@
   <data name="Add another service to log in." xml:space="preserve">
     <value>Añade otro servicio para iniciar sesión.</value>
   </data>
+  <data name="An error occurred while processing your request." xml:space="preserve">
+    <value>Se ha producido un error al procesar su solicitud.</value>
+  </data>
   <data name="Change password" xml:space="preserve">
     <value>Cambiar contraseña</value>
   </data>
@@ -168,6 +171,9 @@
   </data>
   <data name="Forgot your password?" xml:space="preserve">
     <value>¿Olvidó la contraseña?</value>
+  </data>
+  <data name="Go to Login page" xml:space="preserve">
+    <value>Ir a la página de inicio de sesión</value>
   </data>
   <data name="Invalid login attempt." xml:space="preserve">
     <value>Intento de inicio de sesión no válido.</value>
@@ -220,6 +226,9 @@
   <data name="Remove" xml:space="preserve">
     <value>Eliminar</value>
   </data>
+  <data name="Request ID" xml:space="preserve">
+    <value>ID de solicitud</value>
+  </data>
   <data name="Resend" xml:space="preserve">
     <value>Reenviar</value>
   </data>
@@ -247,6 +256,9 @@ Introduzca a continuación una dirección de correo electrónico para este sitio
   </data>
   <data name="This account has been locked out, please try again later." xml:space="preserve">
     <value>Esta cuenta ha sido bloqueada, inténtalo de nuevo más tarde.</value>
+  </data>
+  <data name="Unable to load user." xml:space="preserve">
+    <value>No se puede cargar el usuario.</value>
   </data>
   <data name="Update password" xml:space="preserve">
     <value>Actualizar contraseña</value>

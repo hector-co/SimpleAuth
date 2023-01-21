@@ -4,16 +4,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using SimpleAuth.Domain.Model;
+using SimpleAuth.Server.Models;
+using SimpleAuth.Server.Resources.Localizers;
 
 namespace SimpleAuth.Server.Pages.Account
 {
     public class ConfirmEmailModel : PageModel
     {
         private readonly UserManager<User> _userManager;
+        private readonly SharedResourceLocalizer _sharedLocalizer;
 
-        public ConfirmEmailModel(UserManager<User> userManager)
+        public ConfirmEmailModel(UserManager<User> userManager, SharedResourceLocalizer sharedLocalizer)
         {
             _userManager = userManager;
+            _sharedLocalizer = sharedLocalizer;
         }
 
         public string? ReturnUrl { get; set; }
@@ -29,13 +33,14 @@ namespace SimpleAuth.Server.Pages.Account
 
             if (userId == null || code == null)
             {
-                return RedirectToPage("/Index");
+                return RedirectToPage("/Login");
             }
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{userId}'.");
+                TempData["TempStatusMessage"] = StatusMessageModel.ErrorMessage(_sharedLocalizer["Unable to load user."]);
+                return RedirectToPage("/Login");
             }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));

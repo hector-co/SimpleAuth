@@ -75,15 +75,14 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    //app.UseExceptionHandler("/Error");
 }
+
+app.UseExceptionHandler("/Error");
 
 // Replace with registered clients?
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 app.UseStaticFiles();
-
-app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseRouting();
 
