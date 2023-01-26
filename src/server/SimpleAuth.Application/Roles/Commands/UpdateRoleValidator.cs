@@ -8,15 +8,5 @@ public class UpdateRoleValidator : AbstractValidator<UpdateRole>
     {
         RuleFor(c => c.Name)
             .MaximumLength(256);
-        RuleForEach(c => c.Claims)
-            .SetValidator(new UpdateRoleClaimValidator());
     }
-
-    public class UpdateRoleClaimValidator : AbstractValidator<UpdateRole.UpdateRoleClaim>
-    {
-        public UpdateRoleClaimValidator()
-        {
-        }
-    }
-
 }

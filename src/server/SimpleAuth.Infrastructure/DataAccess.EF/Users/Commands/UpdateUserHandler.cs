@@ -1,19 +1,22 @@
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 using SimpleAuth.Domain.Model;
 using SimpleAuth.Domain.Common;
 using SimpleAuth.Application.Common.Commands;
 using SimpleAuth.Application.Users.Commands;
+using Microsoft.AspNetCore.Identity;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Users.Commands;
 
 public class UpdateUserHandler : ICommandHandler<UpdateUser>
 {
     private readonly SimpleAuthContext _context;
+    private readonly UserManager<User> _userManager;
 
-    public UpdateUserHandler(SimpleAuthContext context)
+    public UpdateUserHandler(SimpleAuthContext context, UserManager<User> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task<Response> Handle(UpdateUser request, CancellationToken cancellationToken)
@@ -25,21 +28,31 @@ public class UpdateUserHandler : ICommandHandler<UpdateUser>
         if (user == null)
             return Response.Failure(new Error("User.Update.NotFound", "Entity not found."));
 
-        user.UserName = request.UserName;
-        user.Email = request.Email;
-        user.EmailConfirmed = request.EmailConfirmed;
-        user.PhoneNumber = request.PhoneNumber;
         user.Name = request.Name;
         user.LastName = request.LastName;
-        user.Roles = await _context.Set<Role>().Where(er => request.RolesId.Contains(er.Id)).ToListAsync(cancellationToken);
-        user.Claims = request.Claims.Select(r => new UserClaim
-        {
-            Id = r.Id,
-            ClaimType = r.ClaimType,
-            ClaimValue = r.ClaimValue,
-        }).ToList();
+        user.PhoneNumber = request.PhoneNumber;
+        user.UserRoles = request.RolesId.Select(rId => new UserRole { RoleId = rId }).ToList();
+        user.Claims = new List<UserClaim>
+            {
+                new UserClaim { ClaimType = Claims.GivenName, ClaimValue = request.Name },
+                new UserClaim { ClaimType = Claims.FamilyName, ClaimValue = request.LastName },
+                new UserClaim { ClaimType = Claims.PhoneNumber, ClaimValue = request.PhoneNumber },
+            };
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _userManager.UpdateAsync(user);
+
+        var result = await _userManager.CreateAsync(user);
+
+        if (!result.Succeeded)
+        {
+            if (result.Errors.Any(e => e.Code.Equals("DuplicateUserName", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return Response.Failure<string>("User.Update.Duplicated", $"USer '{request.Name}' already exists");
+            }
+
+            return Response.Failure<string>("User.Update.Error", result.ToString());
+        }
+
         return Response.Success();
     }
 }

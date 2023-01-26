@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.Extensions;
 using QueryX.Exceptions;
@@ -62,7 +63,10 @@ public class ExceptionHandlerMiddleware
 
         logger.LogError(exception, "Exception was thrown: {message}. Url: {url}", exception.Message, context.Request.GetDisplayUrl());
 
-        var result = JsonSerializer.Serialize(errorResult);
+        var result = JsonSerializer.Serialize(errorResult, new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        });
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)errorResult.Status;
         return context.Response.WriteAsync(result);

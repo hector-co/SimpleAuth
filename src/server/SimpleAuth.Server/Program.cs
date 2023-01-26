@@ -104,7 +104,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseExceptionHandler("/Error");
+//app.UseExceptionHandler("/Error");
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 // Replace with registered clients?
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());

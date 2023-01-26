@@ -6,23 +6,11 @@ public class UpdateUserValidator : AbstractValidator<UpdateUser>
 {
     public UpdateUserValidator()
     {
-        RuleFor(c => c.UserName)
-            .MaximumLength(256);
-        RuleFor(c => c.Email)
-            .MaximumLength(256);
         RuleFor(c => c.Name)
+            .NotEmpty()
             .MaximumLength(256);
         RuleFor(c => c.LastName)
+            .NotEmpty()
             .MaximumLength(256);
-        RuleForEach(c => c.Claims)
-            .SetValidator(new UpdateUserClaimValidator());
     }
-
-    public class UpdateUserClaimValidator : AbstractValidator<UpdateUser.UpdateUserClaim>
-    {
-        public UpdateUserClaimValidator()
-        {
-        }
-    }
-
 }

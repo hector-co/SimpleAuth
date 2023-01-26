@@ -5,22 +5,12 @@ namespace SimpleAuth.Application.Users.Commands;
 
 public record UpdateUser
 (
-    bool IsAdmin,
     List<string> RolesId,
-    List<UpdateUser.UpdateUserClaim> Claims,
-    string UserName,
-    string Email,
-    bool EmailConfirmed,
-    string PhoneNumber,
     string Name,
-    string LastName
+    string LastName,
+    string PhoneNumber
 ) : ICommand
 {
     [JsonIgnore]
-    public string Id { get; set; }
-
-    public record UpdateUserClaim(
-        int Id,
-        string ClaimType,
-        string ClaimValue);
+    public string Id { get; set; } = string.Empty;
 }

@@ -18,15 +18,18 @@ public class RegisterRoleHandler : ICommandHandler<RegisterRole, string>
 
     public async Task<Response<string>> Handle(RegisterRole request, CancellationToken cancellationToken)
     {
+        var exists = await _context.Set<Role>().AnyAsync(r => r.NormalizedName == request.Name.ToUpper(), cancellationToken);
+
+        if (exists)
+        {
+            return Response.Failure<string>("Role.Register.Duplicated", $"Role '{request.Name}' already exists");
+        }
+
         var role = new Role
         {
             Name = request.Name,
             AssignByDefault = request.AssignByDefault,
-            Claims = request.Claims.Select(r => new RoleClaim
-            {
-                ClaimType = r.ClaimType,
-                ClaimValue = r.ClaimValue,
-            }).ToList(),
+            NormalizedName = request.Name.ToUpper()
         };
 
         _context.Add(role);

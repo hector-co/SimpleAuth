@@ -18,6 +18,14 @@ public class UpdateRoleHandler : ICommandHandler<UpdateRole>
 
     public async Task<Response> Handle(UpdateRole request, CancellationToken cancellationToken)
     {
+        var existentRoleId = await _context.Set<Role>().Where(r => r.NormalizedName == request.Name.ToUpper())
+            .Select(r => r.Id).FirstOrDefaultAsync(cancellationToken);
+
+        if (!string.IsNullOrEmpty(existentRoleId) && !existentRoleId.Equals(request.Id, StringComparison.InvariantCultureIgnoreCase))
+        {
+            return Response.Failure<string>("Role.Update.Duplicated", $"Role '{request.Name}' already exists");
+        }
+
         var role = await _context.Set<Role>()
             .AddIncludes()
             .FirstOrDefaultAsync(m => m.Id == request.Id, cancellationToken);
@@ -27,12 +35,6 @@ public class UpdateRoleHandler : ICommandHandler<UpdateRole>
 
         role.Name = request.Name;
         role.AssignByDefault = request.AssignByDefault;
-        role.Claims = request.Claims.Select(r => new RoleClaim
-        {
-            Id = r.Id,
-            ClaimType = r.ClaimType,
-            ClaimValue = r.ClaimValue,
-        }).ToList();
 
         await _context.SaveChangesAsync(cancellationToken);
         return Response.Success();
