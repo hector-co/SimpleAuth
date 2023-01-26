@@ -7,8 +7,13 @@ namespace SimpleAuth.Server.Pages.Account
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
-        public IActionResult OnGet()
+        public string? ReturnUrl { get; set; }
+
+        public IActionResult OnGet(string? returnUrl)
         {
+            returnUrl ??= Url.Content("~/");
+            ReturnUrl = returnUrl;
+
             if (User.Identity?.IsAuthenticated ?? false)
                 return RedirectToPage("/Manage");
 

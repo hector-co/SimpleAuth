@@ -86,14 +86,19 @@ namespace SimpleAuth.Server.Pages.Account
 
         public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
         {
+            if (User.Identity?.IsAuthenticated ?? false)
+            {
+                if (!string.IsNullOrEmpty(returnUrl))
+                    return Redirect(returnUrl);
+                
+                return RedirectToPage("/Manage");
+            }
+
             var serverSettings = (await _mediator.Send(new GetServerSettingsDto())).Data;
 
             ShowRegistrationLink = serverSettings?.AllowSelfRegistration ?? false;
 
             ApplicationName = await GetApplicationName(returnUrl);
-
-            if (User.Identity?.IsAuthenticated ?? false)
-                return RedirectToPage("/Manage");
 
             returnUrl ??= Url.Content("~/");
 
@@ -111,6 +116,12 @@ namespace SimpleAuth.Server.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
+            var serverSettings = (await _mediator.Send(new GetServerSettingsDto())).Data;
+
+            ShowRegistrationLink = serverSettings?.AllowSelfRegistration ?? false;
+
+            ApplicationName = await GetApplicationName(returnUrl);
+
             returnUrl ??= Url.Content("~/");
             ReturnUrl = returnUrl;
 
