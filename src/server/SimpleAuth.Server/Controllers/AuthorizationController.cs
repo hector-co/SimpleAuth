@@ -15,6 +15,7 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace SimpleAuth.Server.Controllers;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 public class AuthorizationController : Controller
 {
     private readonly IOpenIddictApplicationManager _applicationManager;

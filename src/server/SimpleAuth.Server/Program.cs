@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using System.Reflection;
 using SimpleAuth.Server.Resources.Localizers;
 using SimpleAuth.Server;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,14 +52,35 @@ builder.RegisterDependencies();
 
 builder.Services.AddCors();
 
+var serverSettings = builder.Configuration.GetSection(ServerSettingsOption.ServerSettings).Get<ServerSettingsOption>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.DescribeAllParametersInCamelCase();
-});
 
-var serverSettings = builder.Configuration.GetSection(ServerSettingsOption.ServerSettings).Get<ServerSettingsOption>();
+    options.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.OpenIdConnect,
+        OpenIdConnectUrl = new Uri($"{serverSettings.ServerUrl}/.well-known/openid-configuration")
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Authorization"
+                }
+            },
+            new List<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -74,7 +96,12 @@ app.Use(async (context, next) =>
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.OAuthClientId("swagger-ui");
+        options.OAuthScopes("openid", "profile");
+        options.OAuthUsePkce();
+    });
 }
 
 app.UseExceptionHandler("/Error");

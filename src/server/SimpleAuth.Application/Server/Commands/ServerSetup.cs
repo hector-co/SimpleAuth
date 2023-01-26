@@ -1,15 +1,13 @@
-﻿using SimpleAuth.Application.Common.Commands;
+﻿namespace SimpleAuth.Application.Server.Commands;
 
-namespace SimpleAuth.Application.Server.Commands;
-
-public record SetupServer
+public record ServerSetup
 (
     bool AllowSelfRegistration,
-    List<SetupServer.SetupRole> Roles,
-    List<SetupServer.SetupScopes> Scopes,
-    List<SetupServer.ConfidentialApp> ConfidentialApps,
-    List<SetupServer.PublicApp> PublicApps
-) : ICommand
+    List<ServerSetup.SetupRole> Roles,
+    List<ServerSetup.SetupScopes> Scopes,
+    List<ServerSetup.ConfidentialApp> ConfidentialApps,
+    List<ServerSetup.PublicApp> PublicApps
+)
 {
     public record SetupRole(string Name, bool AssignByDefault);
     public record SetupScopes(string Name, string DisplayName);

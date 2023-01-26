@@ -1,44 +1,110 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using OpenIddict.Core;
 using OpenIddict.EntityFrameworkCore.Models;
+using SimpleAuth.Application.Common.Commands;
+using SimpleAuth.Application.Server.Commands;
 using SimpleAuth.Domain.Common;
 using SimpleAuth.Domain.Model;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.Text.Json;
-using SimpleAuth.Application.Common.Commands;
-using SimpleAuth.Application.Server.Commands;
 using Microsoft.EntityFrameworkCore;
+using SimpleAuth.Application.Server;
+using Microsoft.Extensions.Options;
+using SimpleAuth.Application;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Server.Commands;
 
-public class SetupServerHandler : ICommandHandler<SetupServer>
+public class InitServerHandler : ICommandHandler<InitServer>
 {
+    private readonly UserManager<User> _userManager;
     private readonly RoleManager<Role> _roleManager;
+    private readonly IUserStore<User> _userStore;
     private readonly OpenIddictApplicationManager<OpenIddictEntityFrameworkCoreApplication<int>> _appManager;
     private readonly OpenIddictScopeManager<OpenIddictEntityFrameworkCoreScope<int>> _scopeManager;
     private readonly SimpleAuthContext _context;
+    private readonly ServerSettingsOption _serverOptions;
 
-    public SetupServerHandler(RoleManager<Role> roleManager, OpenIddictApplicationManager<OpenIddictEntityFrameworkCoreApplication<int>> appManager,
-        OpenIddictScopeManager<OpenIddictEntityFrameworkCoreScope<int>> scopeManager, SimpleAuthContext context)
+    public InitServerHandler(UserManager<User> userManager, RoleManager<Role> roleManager,
+        IUserStore<User> userStore, OpenIddictApplicationManager<OpenIddictEntityFrameworkCoreApplication<int>> appManager,
+        OpenIddictScopeManager<OpenIddictEntityFrameworkCoreScope<int>> scopeManager, SimpleAuthContext context,
+        IOptions<ServerSettingsOption> serverOptions)
     {
+        _userManager = userManager;
         _roleManager = roleManager;
+        _userStore = userStore;
         _appManager = appManager;
         _scopeManager = scopeManager;
         _context = context;
+        _serverOptions = serverOptions.Value;
     }
 
-    public async Task<Response> Handle(SetupServer request, CancellationToken cancellationToken)
+    public async Task<Response> Handle(InitServer request, CancellationToken cancellationToken)
     {
+        await RegisterDefaults(cancellationToken);
+
+        await ProcessServerSetup(request.ServerSetup, cancellationToken);
+
+        return Response.Success();
+    }
+
+    private async Task RegisterDefaults(CancellationToken cancellationToken)
+    {
+        if (!await _context.Set<ServerSettings>().AnyAsync(cancellationToken))
+        {
+            _context.Add(new ServerSettings(true));
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        await SetupRoles(new List<ServerSetup.SetupRole> { new ServerSetup.SetupRole(AuthConstants.Roles.AuthAdmin, false) });
+
+        var authRole = await _context.Set<Role>()
+            .FirstAsync(r => r.NormalizedName == AuthConstants.Roles.AuthAdmin.ToUpper(), cancellationToken);
+
+        if (!await _context.Set<User>().AnyAsync(u => u.UserRoles.Any(r => r.Role.Id == authRole.Id), cancellationToken))
+        {
+            var adminUser = new User
+            {
+                EmailConfirmed = true,
+                Email = _serverOptions.AdminEmail,
+                PhoneNumber = string.Empty,
+                Claims = new List<UserClaim>
+                    {
+                        new UserClaim { ClaimType = Claims.GivenName, ClaimValue = string.Empty },
+                        new UserClaim { ClaimType = Claims.FamilyName, ClaimValue = string.Empty },
+                        new UserClaim { ClaimType = Claims.PhoneNumber, ClaimValue = string.Empty }
+                    },
+                UserRoles = new List<UserRole> { new UserRole { Role = authRole } }
+            };
+
+            await _userStore.SetUserNameAsync(adminUser, _serverOptions.AdminEmail, cancellationToken);
+            await ((IUserEmailStore<User>)_userStore).SetEmailAsync(adminUser, _serverOptions.AdminEmail, cancellationToken);
+
+            await _userManager.CreateAsync(adminUser, _serverOptions.AdminPassword);
+        }
+
+        await SetupPublicApps(
+            new List<ServerSetup.PublicApp> {
+                new ServerSetup.PublicApp(
+                    "swagger-ui",
+                    "Swagger UI",
+                    new[]{ $"{_serverOptions.ServerUrl}/swagger/oauth2-redirect.html" }.ToList(),
+                    new []{ "" }.ToList(), new []{ "openid", "profile" }.ToList())},
+            cancellationToken);
+    }
+
+    private async Task ProcessServerSetup(ServerSetup? serverSetup, CancellationToken cancellationToken)
+    {
+        if (serverSetup == null) return;
+
         var setting = await _context.Set<ServerSettings>().FirstAsync(cancellationToken);
-        setting.AllowSelfRegistration = request.AllowSelfRegistration;
+        setting.AllowSelfRegistration = serverSetup.AllowSelfRegistration;
         await _context.SaveChangesAsync(cancellationToken);
+        await SetupRoles(serverSetup.Roles);
 
-        await SetupRoles(request.Roles);
-
-        var scopes = request.Scopes.ToDictionary(s => s.Name, s => (s.DisplayName, Resources: new List<string>()));
-        var appScopes = request.ConfidentialApps
+        var scopes = serverSetup.Scopes.ToDictionary(s => s.Name, s => (s.DisplayName, Resources: new List<string>()));
+        var appScopes = serverSetup.ConfidentialApps
             .Select(a => (a.Id, a.Scopes, Confidential: true))
-            .Concat(request.PublicApps.Select(a => (a.Id, a.Scopes, Confidential: false)));
+            .Concat(serverSetup.PublicApps.Select(a => (a.Id, a.Scopes, Confidential: false)));
         foreach (var appScope in appScopes)
         {
             foreach (var scope in appScope.Scopes)
@@ -55,13 +121,11 @@ public class SetupServerHandler : ICommandHandler<SetupServer>
         }
 
         await SetupScopes(scopes, cancellationToken);
-        await SetupConfidentialApps(request.ConfidentialApps, cancellationToken);
-        await SetupPublicApps(request.PublicApps, cancellationToken);
-
-        return Response.Success();
+        await SetupConfidentialApps(serverSetup.ConfidentialApps, cancellationToken);
+        await SetupPublicApps(serverSetup.PublicApps, cancellationToken);
     }
 
-    private async Task SetupRoles(List<SetupServer.SetupRole> roles)
+    private async Task SetupRoles(List<ServerSetup.SetupRole> roles)
     {
         foreach (var roleInfo in roles)
         {
@@ -109,7 +173,7 @@ public class SetupServerHandler : ICommandHandler<SetupServer>
         }
     }
 
-    private async Task SetupConfidentialApps(List<SetupServer.ConfidentialApp> apps, CancellationToken cancellationToken)
+    private async Task SetupConfidentialApps(List<ServerSetup.ConfidentialApp> apps, CancellationToken cancellationToken)
     {
         foreach (var appInfo in apps)
         {
@@ -142,7 +206,7 @@ public class SetupServerHandler : ICommandHandler<SetupServer>
         }
     }
 
-    private async Task SetupPublicApps(List<SetupServer.PublicApp> apps, CancellationToken cancellationToken)
+    private async Task SetupPublicApps(List<ServerSetup.PublicApp> apps, CancellationToken cancellationToken)
     {
         foreach (var appInfo in apps)
         {

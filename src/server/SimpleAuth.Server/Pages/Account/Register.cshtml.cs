@@ -121,7 +121,8 @@ namespace SimpleAuth.Server.Pages.Account
                     Claims = new List<UserClaim>
                     {
                         new UserClaim { ClaimType = Claims.GivenName, ClaimValue = Input.Name },
-                        new UserClaim { ClaimType = Claims.FamilyName, ClaimValue = Input.LastName }
+                        new UserClaim { ClaimType = Claims.FamilyName, ClaimValue = Input.LastName },
+                        new UserClaim { ClaimType = Claims.PhoneNumber, ClaimValue = string.Empty }
                     }
                 };
 

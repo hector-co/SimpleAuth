@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using QueryX;
 using SimpleAuth.Server.Helpers;
-using Microsoft.AspNetCore.Authorization;
 using SimpleAuth.Application.Roles.Commands;
 using SimpleAuth.Application.Roles.Queries;
+using SimpleAuth.Server.Attributes;
+using static SimpleAuth.Application.AuthConstants;
 
 namespace SimpleAuth.Server.Controllers;
 
-[Authorize(Roles = "AuthAdmin")]
+[AuthorizeRoles(Roles.AuthAdmin)]
 [Route("api/roles")]
 public class RolesController : ControllerBase
 {

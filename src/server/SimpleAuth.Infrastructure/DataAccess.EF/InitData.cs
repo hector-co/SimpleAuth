@@ -5,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SimpleAuth.Application.Server;
 using SimpleAuth.Application.Server.Commands;
-using SimpleAuth.Domain.Model;
 using System.Text.Json;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF;
@@ -33,28 +32,23 @@ public class InitData : IHostedService
 
     private static async Task AddData(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
-        var context = serviceProvider.GetRequiredService<SimpleAuthContext>();
-        if (!await context.Set<ServerSettings>().AnyAsync(cancellationToken))
-        {
-            context.Add(new ServerSettings(true));
-            await context.SaveChangesAsync(cancellationToken);
-        }
+        var mediator = serviceProvider.GetRequiredService<IMediator>();
 
         var serverSettings = serviceProvider.GetRequiredService<IOptions<ServerSettingsOption>>().Value;
         var settingsFileName = $"{serverSettings.SetupFilePath}/auth-server-settings.json";
-        if (!File.Exists(settingsFileName))
-            return;
 
-        var mediator = serviceProvider.GetRequiredService<IMediator>();
+        var fileContent = File.Exists(settingsFileName)
+            ? File.ReadAllText(settingsFileName)
+            : null;
 
-        var fileContent = File.ReadAllText(settingsFileName);
-        var command = JsonSerializer.Deserialize<SetupServer>(fileContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var setup = string.IsNullOrEmpty(fileContent)
+            ? null
+            : JsonSerializer.Deserialize<ServerSetup>(fileContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
 
-        if (command == null)
-            return;
+        var command = new InitServer(setup);
 
         await mediator.Send(command, cancellationToken);
     }
