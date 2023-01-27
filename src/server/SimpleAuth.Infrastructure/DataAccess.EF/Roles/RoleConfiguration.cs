@@ -22,7 +22,8 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
             .HasMaxLength(256);
         builder.HasMany(m => m.Claims)
             .WithOne()
-            .HasForeignKey(r => r.RoleId);
+            .HasForeignKey(r => r.RoleId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(r => r.NormalizedName).HasDatabaseName("RoleNameIndex").IsUnique();
         builder.Property(r => r.ConcurrencyStamp).IsConcurrencyToken();

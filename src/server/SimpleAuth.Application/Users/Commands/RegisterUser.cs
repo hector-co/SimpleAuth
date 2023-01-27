@@ -4,7 +4,7 @@ namespace SimpleAuth.Application.Users.Commands;
 
 public record RegisterUser
 (
-    List<string> RolesId,
+    List<string>? RolesId,
     string Email,
     string Name,
     string LastName,

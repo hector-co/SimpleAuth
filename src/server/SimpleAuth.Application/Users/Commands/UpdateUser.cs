@@ -5,7 +5,7 @@ namespace SimpleAuth.Application.Users.Commands;
 
 public record UpdateUser
 (
-    List<string> RolesId,
+    List<string>? RolesId,
     string Name,
     string LastName,
     string PhoneNumber

@@ -31,7 +31,14 @@ public class UpdateUserHandler : ICommandHandler<UpdateUser>
         user.Name = request.Name;
         user.LastName = request.LastName;
         user.PhoneNumber = request.PhoneNumber;
-        user.UserRoles = request.RolesId.Select(rId => new UserRole { RoleId = rId }).ToList();
+        if (request.RolesId == null)
+        {
+            user.UserRoles = new List<UserRole>();
+        }
+        else
+        {
+            user.UserRoles = request.RolesId.Select(rId => new UserRole { RoleId = rId }).ToList();
+        }
         user.Claims = new List<UserClaim>
             {
                 new UserClaim { ClaimType = Claims.GivenName, ClaimValue = request.Name },
@@ -39,9 +46,7 @@ public class UpdateUserHandler : ICommandHandler<UpdateUser>
                 new UserClaim { ClaimType = Claims.PhoneNumber, ClaimValue = request.PhoneNumber },
             };
 
-        await _userManager.UpdateAsync(user);
-
-        var result = await _userManager.CreateAsync(user);
+        var result = await _userManager.UpdateAsync(user);
 
         if (!result.Succeeded)
         {

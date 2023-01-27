@@ -1,16 +1,14 @@
 ﻿using Microsoft.Extensions.Localization;
-using System.Reflection;
 
 namespace SimpleAuth.Server.Resources.Localizers;
 
 public class SharedResourceLocalizer
 {
-    private readonly IStringLocalizer _localizer;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
-    public SharedResourceLocalizer(IStringLocalizerFactory factory)
+    public SharedResourceLocalizer(IStringLocalizer<SharedResource> factory)
     {
-        var assembly = new AssemblyName(typeof(SharedResource).Assembly.FullName!);
-        _localizer = factory.Create(nameof(SharedResource), assembly.Name!);
+        _localizer = factory;
     }
 
     public string this[string index]

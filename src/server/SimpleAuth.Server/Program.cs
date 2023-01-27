@@ -7,8 +7,8 @@ using SimpleAuth.Application.Server;
 using Microsoft.Extensions.Options;
 using System.Reflection;
 using SimpleAuth.Server.Resources.Localizers;
-using SimpleAuth.Server;
 using Microsoft.OpenApi.Models;
+using SimpleAuth.Server.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +19,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddLocalization();
 
 // Add services to the container.
 builder.Services.AddRazorPages(options =>
@@ -31,8 +31,7 @@ builder.Services.AddRazorPages(options =>
     {
         options.DataAnnotationLocalizerProvider = (type, factory) =>
         {
-            var assembly = new AssemblyName(typeof(ModelValidationResource).Assembly.FullName!);
-            return factory.Create(nameof(ModelValidationResource), assembly.Name!);
+            return factory.Create(typeof(ModelValidationResource));
         };
     });
 

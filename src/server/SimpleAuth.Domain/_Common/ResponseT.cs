@@ -24,7 +24,7 @@ public class Response<TValue> : Response
         return new Response<TValue>(error);
     }
 
-    public static Response<TValue> Failure(string code, string message, Exception? innerException = null)
+    public new static Response<TValue> Failure(string code, string message, Exception? innerException = null)
     {
         return new Response<TValue>(new Error(code, message, innerException));
     }

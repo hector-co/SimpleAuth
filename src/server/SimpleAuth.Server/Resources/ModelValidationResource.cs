@@ -1,4 +1,4 @@
-﻿namespace SimpleAuth.Server;
+﻿namespace SimpleAuth.Server.Resources;
 
 public class ModelValidationResource
 {

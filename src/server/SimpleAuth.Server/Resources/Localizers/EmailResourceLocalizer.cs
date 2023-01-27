@@ -5,12 +5,11 @@ namespace SimpleAuth.Server.Resources.Localizers;
 
 public class EmailResourceLocalizer
 {
-    private readonly IStringLocalizer _localizer;
+    private readonly IStringLocalizer<EmailResource> _localizer;
 
-    public EmailResourceLocalizer(IStringLocalizerFactory factory)
+    public EmailResourceLocalizer(IStringLocalizer<EmailResource> localizer)
     {
-        var assembly = new AssemblyName(typeof(EmailResource).Assembly.FullName!);
-        _localizer = factory.Create(nameof(EmailResource), assembly.Name!);
+        _localizer = localizer;
     }
 
     public string this[string index]

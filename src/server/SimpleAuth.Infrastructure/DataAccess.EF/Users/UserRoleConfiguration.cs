@@ -17,7 +17,8 @@ namespace SimpleAuth.Infrastructure.DataAccess.EF.Users
         {
             builder.HasKey(m => new { m.RoleId, m.UserId });
             builder.ToTable("UserRoles", _dbSchema);
-            builder.HasOne(m => m.User).WithMany(m => m.UserRoles);
+            builder.HasOne(m => m.User).WithMany(m => m.UserRoles)
+                .OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(m => m.Role)
                 .WithMany().OnDelete(DeleteBehavior.Restrict);
         }

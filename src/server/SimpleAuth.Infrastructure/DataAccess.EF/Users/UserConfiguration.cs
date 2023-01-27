@@ -29,7 +29,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(256);
         builder.HasMany(m => m.Claims)
             .WithOne()
-            .HasForeignKey(r => r.UserId);
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Ignore(m => m.Roles);
 

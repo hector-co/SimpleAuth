@@ -3,6 +3,7 @@ using SimpleAuth.Domain.Model;
 using SimpleAuth.Domain.Common;
 using SimpleAuth.Application.Common.Commands;
 using SimpleAuth.Application.Users.Commands;
+using Microsoft.AspNetCore.Identity;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Users.Commands;
 
@@ -21,7 +22,7 @@ public class DeleteUserHandler : ICommandHandler<DeleteUser>
             .FirstOrDefaultAsync(m => m.Id == request.Id, cancellationToken);
 
         if (user == null)
-            return Response.Failure(new Error("User.Delete.NotFound", "Entity not found."));
+            return Response.Failure("User.Delete.NotFound", "Entity not found.");
 
         _context.Remove(user);
         await _context.SaveChangesAsync(cancellationToken);
