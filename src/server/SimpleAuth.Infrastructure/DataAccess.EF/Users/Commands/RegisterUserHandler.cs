@@ -51,6 +51,7 @@ public class RegisterUserHandler : ICommandHandler<RegisterUser, string>
             LastName = request.LastName,
             PhoneNumber = request.PhoneNumber,
             UserRoles = roleIds.Select(rId => new UserRole { RoleId = rId }).ToList(),
+            LockoutEnabled = true,
             Claims = new List<UserClaim>
             {
                 new UserClaim { ClaimType = Claims.GivenName, ClaimValue = request.Name },

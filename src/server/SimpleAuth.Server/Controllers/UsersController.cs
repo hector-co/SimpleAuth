@@ -65,4 +65,13 @@ public class UsersController : ControllerBase
         response.Verify();
         return Accepted();
     }
+
+    [HttpPost("{id}/lockout")]
+    public async Task<IActionResult> SetUserLockout(string id, [FromBody] SetUserLockout command, CancellationToken cancellationToken)
+    {
+        command.Id = id;
+        var response = await _mediator.Send(command, cancellationToken);
+        response.Verify();
+        return Accepted();
+    }
 }

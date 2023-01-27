@@ -118,6 +118,7 @@ namespace SimpleAuth.Server.Pages.Account
                 {
                     Name = Input.Name,
                     LastName = Input.LastName,
+                    LockoutEnabled = true,
                     Claims = new List<UserClaim>
                     {
                         new UserClaim { ClaimType = Claims.GivenName, ClaimValue = Input.Name },
