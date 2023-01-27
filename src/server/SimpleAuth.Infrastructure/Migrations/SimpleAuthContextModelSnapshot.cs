@@ -480,14 +480,16 @@ namespace SimpleAuth.Infrastructure.Migrations
                 {
                     b.HasOne("SimpleAuth.Domain.Model.Role", null)
                         .WithMany("Claims")
-                        .HasForeignKey("RoleId");
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("SimpleAuth.Domain.Model.UserClaim", b =>
                 {
                     b.HasOne("SimpleAuth.Domain.Model.User", null)
                         .WithMany("Claims")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("SimpleAuth.Domain.Model.UserRole", b =>

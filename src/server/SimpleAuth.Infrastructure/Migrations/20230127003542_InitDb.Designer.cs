@@ -12,8 +12,8 @@ using SimpleAuth.Infrastructure.DataAccess.EF;
 namespace SimpleAuth.Infrastructure.Migrations
 {
     [DbContext(typeof(SimpleAuthContext))]
-    [Migration("20230121211527_Settings")]
-    partial class Settings
+    [Migration("20230127003542_InitDb")]
+    partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -325,7 +325,7 @@ namespace SimpleAuth.Infrastructure.Migrations
                     b.ToTable("RoleClaims", "auth");
                 });
 
-            modelBuilder.Entity("SimpleAuth.Domain.Model.Setting", b =>
+            modelBuilder.Entity("SimpleAuth.Domain.Model.ServerSettings", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -338,7 +338,7 @@ namespace SimpleAuth.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Setting", "auth");
+                    b.ToTable("ServerSettings", "auth");
                 });
 
             modelBuilder.Entity("SimpleAuth.Domain.Model.User", b =>
@@ -482,14 +482,16 @@ namespace SimpleAuth.Infrastructure.Migrations
                 {
                     b.HasOne("SimpleAuth.Domain.Model.Role", null)
                         .WithMany("Claims")
-                        .HasForeignKey("RoleId");
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("SimpleAuth.Domain.Model.UserClaim", b =>
                 {
                     b.HasOne("SimpleAuth.Domain.Model.User", null)
                         .WithMany("Claims")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("SimpleAuth.Domain.Model.UserRole", b =>

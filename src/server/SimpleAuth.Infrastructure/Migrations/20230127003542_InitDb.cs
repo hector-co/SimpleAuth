@@ -76,6 +76,20 @@ namespace SimpleAuth.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ServerSettings",
+                schema: "auth",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AllowSelfRegistration = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ServerSettings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserLogins",
                 schema: "auth",
                 columns: table => new
@@ -96,7 +110,6 @@ namespace SimpleAuth.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    DisplayName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     LastName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -180,7 +193,8 @@ namespace SimpleAuth.Infrastructure.Migrations
                         column: x => x.RoleId,
                         principalSchema: "auth",
                         principalTable: "Roles",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,7 +216,8 @@ namespace SimpleAuth.Infrastructure.Migrations
                         column: x => x.UserId,
                         principalSchema: "auth",
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -359,6 +374,10 @@ namespace SimpleAuth.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "RoleClaims",
+                schema: "auth");
+
+            migrationBuilder.DropTable(
+                name: "ServerSettings",
                 schema: "auth");
 
             migrationBuilder.DropTable(
