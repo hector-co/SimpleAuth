@@ -16,7 +16,7 @@ using Microsoft.Extensions.Options;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Users.Commands;
 
-public class RegisterUserHandler : ICommandHandler<RegisterUser, string>
+public class RegisterUserHandler : ICommandHandler<RegisterUser, Guid>
 {
     private readonly SimpleAuthContext _context;
     private readonly UserManager<User> _userManager;
@@ -34,13 +34,13 @@ public class RegisterUserHandler : ICommandHandler<RegisterUser, string>
         _serverSettings = serverSettings.Value;
     }
 
-    public async Task<Response<string>> Handle(RegisterUser request, CancellationToken cancellationToken)
+    public async Task<Response<Guid>> Handle(RegisterUser request, CancellationToken cancellationToken)
     {
         var defaultRoleIds = await _context.Set<Role>()
             .Where(r => r.AssignByDefault)
             .Select(r => r.Id).ToListAsync(cancellationToken);
 
-        var roleIds = defaultRoleIds.Concat(request.RolesId ?? new List<string>()).Distinct().ToList();
+        var roleIds = defaultRoleIds.Concat(request.RolesId ?? new List<Guid>()).Distinct().ToList();
 
         var user = new User
         {
@@ -49,7 +49,7 @@ public class RegisterUserHandler : ICommandHandler<RegisterUser, string>
             EmailConfirmed = true,
             Name = request.Name,
             LastName = request.LastName,
-            PhoneNumber = request.PhoneNumber,
+            PhoneNumber = request.PhoneNumber ?? string.Empty,
             UserRoles = roleIds.Select(rId => new UserRole { RoleId = rId }).ToList(),
             LockoutEnabled = true,
             Claims = new List<UserClaim>
@@ -66,10 +66,10 @@ public class RegisterUserHandler : ICommandHandler<RegisterUser, string>
         {
             if (result.Errors.Any(e => e.Code.Equals("DuplicateUserName", StringComparison.InvariantCultureIgnoreCase)))
             {
-                return Response.Failure<string>("User.Register.Duplicated", "Duplicated user email");
+                return Response.Failure<Guid>("User.Register.Duplicated", "Duplicated user email");
             }
 
-            return Response.Failure<string>("User.Register.Error", result.ToString());
+            return Response.Failure<Guid>("User.Register.Error", result.ToString());
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);

@@ -7,7 +7,7 @@ using SimpleAuth.Application.Roles.Commands;
 
 namespace SimpleAuth.Infrastructure.DataAccess.EF.Roles.Commands;
 
-public class RegisterRoleHandler : ICommandHandler<RegisterRole, string>
+public class RegisterRoleHandler : ICommandHandler<RegisterRole, Guid>
 {
     private readonly SimpleAuthContext _context;
 
@@ -16,13 +16,13 @@ public class RegisterRoleHandler : ICommandHandler<RegisterRole, string>
         _context = context;
     }
 
-    public async Task<Response<string>> Handle(RegisterRole request, CancellationToken cancellationToken)
+    public async Task<Response<Guid>> Handle(RegisterRole request, CancellationToken cancellationToken)
     {
         var exists = await _context.Set<Role>().AnyAsync(r => r.NormalizedName == request.Name.ToUpper(), cancellationToken);
 
         if (exists)
         {
-            return Response.Failure<string>("Role.Register.Duplicated", $"Role '{request.Name}' already exists");
+            return Response.Failure<Guid>("Role.Register.Duplicated", $"Role '{request.Name}' already exists");
         }
 
         var role = new Role

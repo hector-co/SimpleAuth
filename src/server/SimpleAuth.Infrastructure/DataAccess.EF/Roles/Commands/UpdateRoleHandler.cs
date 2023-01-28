@@ -21,7 +21,7 @@ public class UpdateRoleHandler : ICommandHandler<UpdateRole>
         var existentRoleId = await _context.Set<Role>().Where(r => r.NormalizedName == request.Name.ToUpper())
             .Select(r => r.Id).FirstOrDefaultAsync(cancellationToken);
 
-        if (!string.IsNullOrEmpty(existentRoleId) && !existentRoleId.Equals(request.Id, StringComparison.InvariantCultureIgnoreCase))
+        if (!(existentRoleId == request.Id))
         {
             return Response.Failure<string>("Role.Update.Duplicated", $"Role '{request.Name}' already exists");
         }

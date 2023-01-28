@@ -6,4 +6,4 @@ public record RegisterRole
 (
     string Name,
     bool AssignByDefault
-) : ICommand<string>;
+) : ICommand<Guid>;

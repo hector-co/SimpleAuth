@@ -6,5 +6,5 @@ namespace SimpleAuth.Application.Users.Commands;
 public record SetUserLockout(DateTimeOffset? LockoutEnd) : ICommand
 {
     [JsonIgnore]
-    public string Id { get; set; } = string.Empty;
+    public Guid Id { get; set; }
 }

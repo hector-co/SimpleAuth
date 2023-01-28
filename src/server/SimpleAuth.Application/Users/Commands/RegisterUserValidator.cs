@@ -8,6 +8,7 @@ public class RegisterUserValidator : AbstractValidator<RegisterUser>
     {
         RuleFor(c => c.Email)
             .NotEmpty()
+            .EmailAddress()
             .MaximumLength(256);
         RuleFor(c => c.Name)
             .NotEmpty()

@@ -23,7 +23,7 @@ public class RolesController : ControllerBase
     }
 
     [HttpGet("{id}", Name = "GetRoleById")]
-    public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
         var getByIdQuery = new GetRoleDtoById(id);
         var result = await _mediator.Send(getByIdQuery, cancellationToken);
@@ -49,7 +49,7 @@ public class RolesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateRole command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateRole command, CancellationToken cancellationToken)
     {
         command.Id = id;
         var response = await _mediator.Send(command, cancellationToken);
@@ -58,7 +58,7 @@ public class RolesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var command = new DeleteRole(id);
         var response = await _mediator.Send(command, cancellationToken);

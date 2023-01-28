@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace SimpleAuth.Domain.Model;
 
-public partial class User : IdentityUser
+public partial class User : IdentityUser<Guid>
 {
     public User()
     {
+        Id = Guid.NewGuid();
         Roles = new List<Role>();
         Claims = new List<UserClaim>();
     }

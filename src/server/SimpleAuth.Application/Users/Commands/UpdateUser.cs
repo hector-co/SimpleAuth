@@ -5,12 +5,12 @@ namespace SimpleAuth.Application.Users.Commands;
 
 public record UpdateUser
 (
-    List<string>? RolesId,
+    List<Guid>? RolesId,
     string Name,
     string LastName,
     string PhoneNumber
 ) : ICommand
 {
     [JsonIgnore]
-    public string Id { get; set; } = string.Empty;
+    public Guid Id { get; set; } 
 }

@@ -21,7 +21,7 @@
         "Claims": "List<RoleClaim>",
         "AssignByDefault": "bool"
       },
-      "IdentifierType": "string"
+      "IdentifierType": "Guid"
     },
     "RoleClaim": {
       "properties": {
@@ -56,7 +56,7 @@
           "size": 256
         }
       },
-      "IdentifierType": "string"
+      "IdentifierType": "Guid"
     },
     "UserClaim": {
       "properties": {

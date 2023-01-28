@@ -92,16 +92,13 @@ app.Use(async (context, next) =>
 });
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.OAuthClientId("swagger-ui");
-        options.OAuthScopes("openid", "profile");
-        options.OAuthUsePkce();
-    });
-}
+    options.OAuthClientId("swagger-ui");
+    options.OAuthScopes("openid", "profile");
+    options.OAuthUsePkce();
+});
 
 //app.UseExceptionHandler("/Error");
 app.UseMiddleware<ExceptionHandlerMiddleware>();

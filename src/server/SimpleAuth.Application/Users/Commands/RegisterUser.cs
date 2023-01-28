@@ -4,9 +4,9 @@ namespace SimpleAuth.Application.Users.Commands;
 
 public record RegisterUser
 (
-    List<string>? RolesId,
+    List<Guid>? RolesId,
     string Email,
     string Name,
     string LastName,
-    string PhoneNumber
-) : ICommand<string>;
+    string? PhoneNumber
+) : ICommand<Guid>;
