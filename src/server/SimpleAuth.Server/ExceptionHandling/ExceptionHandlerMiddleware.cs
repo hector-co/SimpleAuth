@@ -63,12 +63,21 @@ public class ExceptionHandlerMiddleware
 
         logger.LogError(exception, "Exception was thrown: {message}. Url: {url}", exception.Message, context.Request.GetDisplayUrl());
 
-        var result = JsonSerializer.Serialize(errorResult, new JsonSerializerOptions
+        if (context.Request.Path.Value?.StartsWith("/api/") ?? false)
         {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        });
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)errorResult.Status;
-        return context.Response.WriteAsync(result);
+            var result = JsonSerializer.Serialize(errorResult, new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            });
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)errorResult.Status;
+            return context.Response.WriteAsync(result);
+        }
+        else
+        {
+            context.Response.Redirect("/Error");
+            return Task.CompletedTask;
+        }
+        
     }
 }

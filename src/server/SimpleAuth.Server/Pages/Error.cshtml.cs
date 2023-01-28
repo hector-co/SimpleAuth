@@ -8,6 +8,7 @@ namespace SimpleAuth.Server.Pages
     [IgnoreAntiforgeryToken]
     public class ErrorModel : PageModel
     {
+        public string ReturnUrl { get; set; } = string.Empty;
         public string? RequestId { get; set; }
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
@@ -19,8 +20,10 @@ namespace SimpleAuth.Server.Pages
             _logger = logger;
         }
 
-        public void OnGet()
+        public void OnGet(string? returnUrl = null)
         {
+            ReturnUrl ??= Url.Content("~/");
+
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
         }
     }
