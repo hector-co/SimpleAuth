@@ -36,11 +36,7 @@ public class RegisterUserHandler : ICommandHandler<RegisterUser, Guid>
 
     public async Task<Response<Guid>> Handle(RegisterUser request, CancellationToken cancellationToken)
     {
-        var defaultRoleIds = await _context.Set<Role>()
-            .Where(r => r.AssignByDefault)
-            .Select(r => r.Id).ToListAsync(cancellationToken);
-
-        var roleIds = defaultRoleIds.Concat(request.RolesId ?? new List<Guid>()).Distinct().ToList();
+        var roleIds = request.RolesId ?? new List<Guid>();
 
         var user = new User
         {
@@ -56,7 +52,7 @@ public class RegisterUserHandler : ICommandHandler<RegisterUser, Guid>
             {
                 new UserClaim { ClaimType = Claims.GivenName, ClaimValue = request.Name },
                 new UserClaim { ClaimType = Claims.FamilyName, ClaimValue = request.LastName },
-                new UserClaim { ClaimType = Claims.PhoneNumber, ClaimValue = request.PhoneNumber },
+                new UserClaim { ClaimType = Claims.PhoneNumber, ClaimValue = request.PhoneNumber ?? string.Empty },
             }
         };
 

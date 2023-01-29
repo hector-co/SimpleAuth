@@ -98,7 +98,7 @@ namespace SimpleAuth.Server.Pages.Account.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber ?? string.Empty);
                 if (!setPhoneResult.Succeeded)
                 {
                     StatusMessage = StatusMessageModel.ErrorMessage("Unexpected error when trying to set phone number.");
